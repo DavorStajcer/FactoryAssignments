@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="10"
+    android:id="@+id/fragment_yamb_layout"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.65"
+        app:layout_constraintBottom_toTopOf="@+id/flFragmentListic">
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="42dp"/>
+
+        <ImageView
+            android:id="@+id/ivRecyclerLayout1"
+            android:layout_width="60dp"
+            android:layout_height="42dp"
+            android:src="@drawable/arrow_down"/>
+        <ImageView
+            android:id="@+id/ivRecyclerLayout2"
+            android:layout_width="60dp"
+            android:layout_marginLeft="8dp"
+            android:layout_height="42dp"
+            android:src="@drawable/arrow_up"/>
+        <ImageView
+            android:id="@+id/ivRecyclerLayout3"
+            android:layout_width="60dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/arrow_up_and_down"/>
+        <ImageView
+            android:id="@+id/ivRecyclerLayout4"
+            android:layout_width="60dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:src="@drawable/ahead_call"/>
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="42dp"/>
+
+
+
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="5dp"
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9.45">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</LinearLayout>
