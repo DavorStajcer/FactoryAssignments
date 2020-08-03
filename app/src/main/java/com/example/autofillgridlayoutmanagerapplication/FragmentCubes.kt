@@ -4,112 +4,40 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.ViewSwitcher
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.bacanjekockica.Cube
 import kotlinx.android.synthetic.main.fragment_dice_roll.*
 
 
 class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
 
-
-    var diceRolled_listener: ICubesRolledObserver? = null
-    var diceRolled = mutableListOf<Int>(0, 0, 0, 0, 0, 0)
-    var aheadCallInYamb = false
-    val pictures = listOf<Int>(
-        R.drawable.cube1,
-        R.drawable.cube2,
-        R.drawable.cube3,
-        R.drawable.cube4, //ovo je lsita slika za kockicce
-        R.drawable.cube5,
-        R.drawable.cube6
-    ) //skup svih slika
-    val cubes = listOf<Cube>(
-        Cube(),
-        Cube(), //lista objkeata za kockice
-        Cube(),
-        Cube(),
-        Cube(),
-        Cube()
-    ) //skup svih objekata kockica
+    val viewModel : FragmentCubesViewModel = ViewModelProvider(this).get(FragmentCubesViewModel::class.java)
+    val imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var j = 0
-        var i = 0 //broji mi koliko je puta stisnut gumb za vrcenje kockica
-        var irator = 0 //sluzi mi za prolazak kroz polje
-
-        val imageViews = listOf<ImageView>(ivCube1, ivCube2, ivCube3, ivCube4, ivCube5, ivCube6)
-
-        btnNajava.isClickable = false
+        btnVrti.isEnabled = true
         btnNajava.isEnabled = false
-        this.aheadCallInYamb = false
+
+        var i = 1
+
+
         btnVrti.setOnClickListener { it ->
-            Log.i("DICE", "Uso u listener ${diceRolled.toString()}")
-            i++ //broji koliko sam puta stisnuo gumb
-
-            when (i) {
-                1 -> {
-                    while (irator < cubes.size) { // rolaju se kockice
-                        cubes[irator].DiceRoll(pictures)
-                        irator++//ovjde se kocice rolaju jednom
-
-                    }
-                    while (j < diceRolled.size) {
-                        diceRolled[j] = when (cubes[j].currentPicture) {
-                            R.drawable.cube1 -> 1
-                            R.drawable.cube2 -> 2
-                            R.drawable.cube3 -> 3
-                            R.drawable.cube4 -> 4
-                            R.drawable.cube5 -> 5
-                            R.drawable.cube6 -> 6
-                            else -> 7
-                        }
-                        j++
-                    }
-                    j = 0
-                    displayCubes(imageViews, cubes)
-                    Log.i("DICE", "Prvo rolanje ${diceRolled.toString()}")//vamo ih prikazujem
-                    addListeners(cubes) //
-                    irator = 0
-                    btnNajava.isClickable = true
-                    btnNajava.isEnabled = true
-                }
-                2 -> {
-                    while (irator < cubes.size) { // rolaju se kockice
-                        cubes[irator].DiceRoll(pictures)
-                        irator++
-                    }
-                    displayCubes(imageViews, cubes)
-                    while (j < diceRolled.size) {
-                        diceRolled[j] = when (cubes[j].currentPicture) {
-                            R.drawable.cube1 -> 1
-                            R.drawable.cube2 -> 2
-                            R.drawable.cube3 -> 3
-                            R.drawable.cube4 -> 4
-                            R.drawable.cube5 -> 5
-                            R.drawable.cube6 -> 6
-                            else -> 7
-                        }
-                        j++
-                    }
-                   diceRolled_listener!!.updateDiceRolled(diceRolled,aheadCallInYamb)
-                    Log.i("DICE", diceRolled.toString())
-                    irator = 0
-                    j = 0
-                    i = 0
-                    btnNajava.isEnabled = false
-                    btnVrti.isClickable = false
-                    btnVrti.isEnabled = false
-                }
+            viewModel.rollDice()
+            displayCubes(imageViews,viewModel.cubes)
+            if(i == 1){
+                addListeners(viewModel.cubes)
+                btnNajava.isEnabled = true
             }
 
-
-        } //ovo je zadatak s kockicom za jamb, uglavnom, sad cupokazan onCreate
+            i = 2
+        }
 
         btnNajava.setOnClickListener { _ ->
-            this.aheadCallInYamb = true
-            btnNajava.isClickable = false
+            this.viewModel.aheadCall.value = true
             btnNajava.isEnabled = false
            btnNajava.setBackgroundResource(R.drawable.btn_ahead_call_pressed)
         }
@@ -144,12 +72,10 @@ class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
         }
     }
 
-    private fun displayCubes(imageViews: List<ImageView>, cubes: List<Cube>) {
-        var brojac = 0
-        while (brojac < imageViews.size) {
-            imageViews[brojac].setImageResource(cubes[brojac].currentPicture)
-            brojac++
-        }
+    private fun displayCubes(imageViewsList: List<ImageView>, cubes: List<Cube>) {
+       for((index,imageView) in imageViewsList.withIndex()){
+            imageView.setImageResource(cubes[index].currentPicture)
+       }
     }
 }
 

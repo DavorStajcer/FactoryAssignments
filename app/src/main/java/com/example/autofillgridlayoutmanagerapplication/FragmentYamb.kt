@@ -59,7 +59,7 @@ class FragmentYamb() : Fragment(), ICubesRolledObserver{
         DataModel(R.layout.grid_layout_element_text_view),DataModel(R.layout.grid_layout_element_text_view),
         DataModel(R.layout.grid_layout_element_text_view,clickable = true),DataModel(R.layout.grid_layout_element_text_view)
     )
-    private val mutableListOfForuthColumn= mutableListOf<DataModel>(
+     private val mutableListOfForuthColumn= mutableListOf<DataModel>(
         DataModel(R.layout.grid_layout_element_text_view,clickable = true),DataModel(R.layout.grid_layout_element_text_view,clickable = true),
         DataModel(R.layout.grid_layout_element_text_view,clickable = true),DataModel(R.layout.grid_layout_element_text_view,clickable = true),
         DataModel(R.layout.grid_layout_element_text_view,clickable = true),DataModel(R.layout.grid_layout_element_text_view,clickable = true),
@@ -147,3 +147,6 @@ class FragmentYamb() : Fragment(), ICubesRolledObserver{
 
 
 }
+
+
+
