@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import java.lang.IllegalArgumentException
 
@@ -15,13 +16,14 @@ val COLUMN_FINAL_RESULT_INDEX = 5
 
 
 
-class RecyclerAdapter(private val context : Context,
-                      private val mutableMapOfColumns: MutableMap<Int,MutableList<DataModel>>,
-                       var aheadCallInYamb : Boolean = false,
-                      private var keepItem: Boolean = false,
-                      val itemClick : (Int,Int) -> Unit,
-                      val getPositionOfSelectedItem : (Int) -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ISetKeepItemRecyclerState, IUpdateLastItemClickedInRecycler{
+class RecyclerAdapter(
+    private val context : Context,
+    private val mutableMapOfColumns: MutableMap<Int,MutableList<DataModel>>,
+    var aheadCallInYamb : Boolean = false,
+    private val enableButtonForChangingFragments : () -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), IUpdateRecyclerState{
+
+    val itemClicked : MutableLiveData<ArrayList<Int>> = MutableLiveData()
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
 
@@ -41,6 +43,8 @@ class RecyclerAdapter(private val context : Context,
             text.text = null
             text.background = null
 
+           // Log.i("tag","$position")
+
             val currentItem = getCurrentItem(position)
             val columnIndex = getColumnAndRowIndex(position)[0]
             val rowIndex = getColumnAndRowIndex(position)[1]
@@ -52,7 +56,7 @@ class RecyclerAdapter(private val context : Context,
 
 
             if(!checkIsRowANotResult(rowIndex)){
-                text.text = ((currentItem.data ?:0).toString())     //ako je trenutno red rezultat , postavi text stavi da nije klikabilno
+                text.text = ((currentItem.data ?:0).toString())     //ako je trenutno red rezultat , postavi text da nije klikabilan
                 getCurrentItem(position).clickable = false
                 return
             }
@@ -72,16 +76,16 @@ class RecyclerAdapter(private val context : Context,
                 text.setBackgroundResource(R.drawable.text_view_value_set)          //ako je vrijednsot postavljena, prikazi mi i promijeni pozadinu
             }
             if (currentItem.clickable && !currentItem.isValueSet) {
-                    text.setBackgroundResource(R.drawable.text_view_for_input)    //ako je klikabilno, promijeni pozadinu
-                    text.setOnClickListener {
-                        itemClick(position, rowIndex)
-                    }
+                text.setBackgroundResource(R.drawable.text_view_for_input)    //ako je klikabilno, promijeni pozadinu
+                text.setOnClickListener {
+                    itemClicked.value = arrayListOf(position,rowIndex)
+                }
             }
 
-
-            }
 
         }
+
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
@@ -95,7 +99,7 @@ class RecyclerAdapter(private val context : Context,
 
         var numberOfElements = 0
         for((key,member) in mutableMapOfColumns){
-           numberOfElements += member.count()
+            numberOfElements += member.count()
         }
         return numberOfElements
     }
@@ -113,12 +117,22 @@ class RecyclerAdapter(private val context : Context,
 
         when(mutableMapOfColumns[columnIndex]!![rowIndex].layoutId ){
             R.layout.grid_layout_element_text_view -> { (holder as TextViewHolder).bind(position)
-                                    }
+            }
             R.layout.grid_layout_element_image -> {(holder as ImageViewHolder).bind(position)
-                }
+            }
             else -> throw IllegalArgumentException("View type is out of bounds")
         }
 
+    }
+
+    override fun updateRecyclerState(positionOfItemSelectedInRecylcer: Int, valueForInput : Int) {
+        aheadCallInYamb = false
+
+        setCurrentItemStats(positionOfItemSelectedInRecylcer,valueForInput)
+        setResultRowValues(positionOfItemSelectedInRecylcer,valueForInput)
+        disableItemClicks()
+        notfyRecyclerOfChanges(positionOfItemSelectedInRecylcer)
+        enableButtonForChangingFragments()
     }
 
     private fun getColumnAndRowIndex (position: Int) : MutableList<Int>{
@@ -142,7 +156,7 @@ class RecyclerAdapter(private val context : Context,
         val rowIndex = getColumnAndRowIndex(currentItemPosition)[1]
 
         return when(true){
-          rowIndex < RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index -> {
+            rowIndex < RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index -> {
                 getItemPosition(mutableMapOfColumns.size,currentItemPosition%mutableMapOfColumns.size,RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index)
             }
             rowIndex < RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index && rowIndex > RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index-> {
@@ -153,7 +167,6 @@ class RecyclerAdapter(private val context : Context,
             }
         }
     }
-
     private fun setResultRowValues( positionOfItemSelectedInRecylcer : Int, valueForInput: Int){
 
         val resultColumnIndex = getColumnAndRowIndex(positionOfItemSelectedInRecylcer)[0]
@@ -176,25 +189,6 @@ class RecyclerAdapter(private val context : Context,
         mutableMapOfColumns[columnIndex]!![rowIndex].data = valueForInput.toString() // Stavi vrijednost elementa na kliknutoj poziciji na vrijednost koju treba upisati
         mutableMapOfColumns[columnIndex]!![rowIndex].isValueSet = true
     }
-
-
-    override fun updateRecyclerKeepItemState(keepItem: Boolean,positionOfItemSelectedInRecylcer: Int,valueForInput : Int) {
-        this.keepItem = keepItem
-        if(keepItem){
-
-            aheadCallInYamb = false
-
-            setCurrentItemStats(positionOfItemSelectedInRecylcer,valueForInput)
-            setResultRowValues(positionOfItemSelectedInRecylcer,valueForInput)
-            disableItemClicks()
-            notfyRecyclerOfChanges(positionOfItemSelectedInRecylcer)
-
-            getPositionOfSelectedItem(positionOfItemSelectedInRecylcer) //proslijedi fragmentu poziciju promjenitog elementa
-
-        }
-
-}
-
     private fun notfyRecyclerOfChanges(positionOfItemSelectedInRecylcer: Int) {
         val resultRowIndex = getColumnAndRowIndex(positionOfItemSelectedInRecylcer)[1]
         notifyItemChanged(positionOfItemSelectedInRecylcer)                                      // Obavijesti o promjenama
@@ -202,9 +196,6 @@ class RecyclerAdapter(private val context : Context,
         notifyItemChanged(resultItemPosition)
         notifyItemChanged(getItemPosition(mutableMapOfColumns.size,COLUMN_FINAL_RESULT_INDEX,resultRowIndex))
     }
-
-
-    //postavlje svima elemenitma clickable = false
     private fun disableItemClicks() {
         for((column,row) in mutableMapOfColumns){
             for((index,dataModel) in row.withIndex())
@@ -212,50 +203,9 @@ class RecyclerAdapter(private val context : Context,
         }
         notifyDataSetChanged()
     }
-                                                                                    //psotavlja iteme u 1.i 2. stupcu na clickable
-    private fun setNextItemClickable(positionOfItemSelectedInRecylcer: Int) {
 
-        for((column,arrayDataModel) in mutableMapOfColumns){
-            for((row,dataModel) in arrayDataModel.withIndex()){
-                if(column == 1 && !dataModel.isValueSet){
-                    if(row != RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index && row != RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index  && row != RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_THREE.index){
-                        dataModel.clickable = true
-                        break
-                    }
-                }
-                if(column == 2 && dataModel.isValueSet){
-                    if(row == 0)
-                        break
-                    if(row == RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index + 1 || row == RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index + 1){
-                        Log.i("ajde","dole -> ${getItemPosition(6,column,row)}")
-                        mutableMapOfColumns[column]!![row - 2].clickable = true
-                        break
-                    }
-                    Log.i("ajde","dole, preskok -> ${getItemPosition(6,column,row)}")
-                    mutableMapOfColumns[column]!![row - 1].clickable = true
-                    break
-                }
-            }
-        }
-        }
-                                                                                    //aktivira se kada se triggera metoda onDetach od fragmenta yamb lsitica
-    override fun updateLastItemClicked(positionOfLastItemClicked: Int) {
-        Log.i("CLICKED", "$positionOfLastItemClicked")
 
-        if(!mutableMapOfColumns[1]!![0].isValueSet)
-            mutableMapOfColumns[1]!![0].clickable = true
-        if(!mutableMapOfColumns[2]!![14].isValueSet)
-            mutableMapOfColumns[2]!![14].clickable = true
 
-            setNextItemClickable(positionOfLastItemClicked)
-
-        for((column,arreydDataModel) in mutableMapOfColumns){
-            for((row,dataModel) in arreydDataModel.withIndex()){
-                if(column == 3 && !mutableMapOfColumns[column]!![row].isValueSet)
-                    mutableMapOfColumns[column]!![row].clickable = true
-            }
-        }
-    }
 
 
 

@@ -1,30 +1,30 @@
 package com.example.bacanjekockica
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.autofillgridlayoutmanagerapplication.*
 import kotlinx.android.synthetic.main.fragment_yamb_ticket.*
 
+enum class DeviceWidthAndRowItemNumber(val value : Int){
+    DEVICE(1080),ITEM_NUMBER(6)
+}
 
-
-
-
-
-
+@Suppress("UNCHECKED_CAST")
 class FragmentYamb() : Fragment(){
 
     lateinit var viewModel: FragmentYambViewModel
+    val popUpWhenClicked = PopUpWhenClickedDialog()
+    lateinit var adapter : RecyclerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        Log.i("TAG","onCREATEVIEW")
+
         return inflater.inflate(R.layout.fragment_yamb_ticket,container,false)
 
     }
@@ -33,44 +33,48 @@ class FragmentYamb() : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
 
-        this.viewModel = ViewModelProvider(this).get(FragmentYambViewModel::class.java)
-/*
-        val bottomSheetDialog = BottomSheetDialog()
-        bottomSheetListener = bottomSheetDialog
-        bottomSheetListener?.updateDiceRolledBottomSheet(diceRolled)
+        val bundle = arguments
 
-        val adapter = RecyclerAdapter(context!!.applicationContext, mutableMapOfElements,aheadCallInYamb,itemClick ={ position, rowIndex ->
-            bottomSheetDialog.positionOfItemChanged = position
-            bottomSheetDialog.rowIndex = rowIndex                                   //sluzi za proslijedjivanje trenutno stisnute pozicije (ne mora biti unesen podatak na toj poziciji)
-            bottomSheetDialog.show(fragmentManagerListic!!,"Bottom sheet")
-        })
-        {positionOfLastItemClicked ->
-                this.positionOfLastItemClickedInRecycler = positionOfLastItemClicked //sluzi da proslijedim poziciju zadnjeg elementa
+        viewModel = ViewModelProvider(this).get(FragmentYambViewModel::class.java)
+
+        viewModel.mutableMapOfElements =  bundle!!.getSerializable("daca") as HashMap<Int, MutableList<DataModel>>
+
+        viewModel.diceRolled = bundle.getIntegerArrayList("diceRolled") as ArrayList<Int>
+        viewModel.aheadCall = bundle.getBoolean("aheadCall")
+
+        adapter = RecyclerAdapter(context!!.applicationContext,viewModel.mutableMapOfElements){
+            Log.i("tag","FOR ENABLING")
+            (activity as MainActivity).enableButtonForChangingFragments()
         }
 
+        val layoutManager = AutoFillGridLayoutManager(context!!.applicationContext,DeviceWidthAndRowItemNumber.DEVICE.value/DeviceWidthAndRowItemNumber.ITEM_NUMBER.value)
         recyclerView.adapter = adapter
-        this.adapter = adapter
-        adapter.aheadCallInYamb = aheadCallInYamb
-        bottomSheetDialog.recyclerAdapterStateListener = adapter
-        val layoutManager = AutoFillGridLayoutManager(context!!.applicationContext, ScreenValues.DEVICE_WIDTH.size/ScreenValues.COLUMN_NUMBER.size)
         recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(true)*/
-    }
+        recyclerView.setHasFixedSize(true
+        )
 
-/*    override fun updateDiceRolled(diceRolled: MutableList<Int>,aheadCallInYamb: Boolean) {
-        Log.i("DICEROLLED","$diceRolled")
-        Log.i("DICEROLLED","Najava -> $aheadCallInYamb")            //stavi dice rolled od ovog fragmenta na pravu vrijednost i ahead Call
-        this.diceRolled = diceRolled
-        this.aheadCallInYamb = aheadCallInYamb
-    }
+        popUpWhenClicked.adapter = this.adapter
+
+        adapter.itemClicked.observe(this, Observer {
+            val bundlePopUp = Bundle()
+            bundlePopUp.putIntegerArrayList("positions", it)
+            bundlePopUp.putIntegerArrayList("diceRolled",viewModel.diceRolled)
+            popUpWhenClicked.arguments = bundlePopUp
+            viewModel.positionOfLastItemClicked = it[0]
+            this.popUpWhenClicked.show(activity!!.supportFragmentManager,"PopUp")
+        })
+
+        }
 
     override fun onDetach() {
         super.onDetach()
-        this.adapter?.updateLastItemClicked(this.positionOfLastItemClickedInRecycler) //update-aj klikabilnost elemenata u recylceru
-    }*/
+        viewModel.updateLastItemClicked()
+        (activity as MainActivity).getMutableList(viewModel.mutableMapOfElements)
 
-
+    }
 }
+
+
 
 
 

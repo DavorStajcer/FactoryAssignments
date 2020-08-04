@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ViewSwitcher
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.bacanjekockica.Cube
 import kotlinx.android.synthetic.main.activity_main.*
@@ -20,8 +21,18 @@ class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
        viewModel = ViewModelProvider(this).get(FragmentCubesViewModel::class.java)
         imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
+
+
+        viewModel.diceRolled.observe(this, Observer {
+            (activity as MainActivity).getDices(it)
+            (activity as MainActivity).enableButtonForChangingFragments()
+        })
+        viewModel.aheadCall.observe(this, Observer {
+            (activity as MainActivity).getAheadCall(it)
+        })
 
         btnVrti.isEnabled = true
         btnNajava.isEnabled = false
@@ -36,7 +47,7 @@ class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
                 btnNajava.isEnabled = true
             }
             if(i == 2){
-                viewModel.setDiceRolled()
+                viewModel.setRolledNumbers()
                 btnNajava.isEnabled = false
                 btnVrti.isEnabled = false
             }
@@ -46,7 +57,7 @@ class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
         }
 
         btnNajava.setOnClickListener { _ ->
-            this.viewModel.aheadCall.value = true
+            this.viewModel.aheadCall.value = false
             btnNajava.isEnabled = false
             btnNajava.setBackgroundResource(R.drawable.btn_ahead_call_pressed)
         }
@@ -80,7 +91,6 @@ class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
             cubes[5].pressed = !cubes[5].pressed
         }
     }
-
     private fun displayCubes(imageViewsList: List<ImageView>, cubes: List<Cube>) {
        for((index,imageView) in imageViewsList.withIndex()){
             imageView.setImageResource(cubes[index].currentPicture)
