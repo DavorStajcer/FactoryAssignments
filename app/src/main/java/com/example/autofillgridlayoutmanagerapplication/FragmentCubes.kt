@@ -8,22 +8,25 @@ import android.widget.ViewSwitcher
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.bacanjekockica.Cube
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_dice_roll.*
 
 
 class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
 
-    val viewModel : FragmentCubesViewModel = ViewModelProvider(this).get(FragmentCubesViewModel::class.java)
-    val imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
+    lateinit var viewModel : FragmentCubesViewModel
+    lateinit var imageViews : List<ImageView>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+       viewModel = ViewModelProvider(this).get(FragmentCubesViewModel::class.java)
+        imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
 
         btnVrti.isEnabled = true
         btnNajava.isEnabled = false
 
         var i = 1
-
 
         btnVrti.setOnClickListener { it ->
             viewModel.rollDice()
@@ -32,6 +35,12 @@ class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
                 addListeners(viewModel.cubes)
                 btnNajava.isEnabled = true
             }
+            if(i == 2){
+                viewModel.setDiceRolled()
+                btnNajava.isEnabled = false
+                btnVrti.isEnabled = false
+            }
+
 
             i = 2
         }
@@ -39,7 +48,7 @@ class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
         btnNajava.setOnClickListener { _ ->
             this.viewModel.aheadCall.value = true
             btnNajava.isEnabled = false
-           btnNajava.setBackgroundResource(R.drawable.btn_ahead_call_pressed)
+            btnNajava.setBackgroundResource(R.drawable.btn_ahead_call_pressed)
         }
 
 

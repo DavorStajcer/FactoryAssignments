@@ -2,37 +2,47 @@ package com.example.autofillgridlayoutmanagerapplication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import com.example.bacanjekockica.FragmentYamb
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity(), ISetButtonClickableState {
+class MainActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val fragmentOne = FragmentCubes()
-        val fragmentListic = FragmentYamb()
-        fragmentOne.diceRolled_listener = fragmentListic
-        fragmentListic.fragmentManagerListic = supportFragmentManager
+        val fragmentCubes = FragmentCubes()
+        val fragmentYamb = FragmentYamb()
+
+        btnZamijeniFragment.isEnabled = false
+
+
+
         var brojac: Int = 0
 
         supportFragmentManager.beginTransaction().apply {
-            replace(R.id.flFragmenti, fragmentOne,"Kockice")
+            replace(R.id.flFragmenti, fragmentCubes,"Kockice")
             addToBackStack("Kockice")
             commit()
+
+            fragmentCubes.viewModel.diceRolled.observe(this@MainActivity, Observer {
+             //   fragmentYamb.viewModel.fragmentManager = supportFragmentManager
+             //   fragmentYamb.viewModel.diceRolled.value = it
+                btnZamijeniFragment.isEnabled = true
+            })
+            fragmentCubes.viewModel.aheadCall.observe(this@MainActivity, Observer {
+              //  fragmentYamb.viewModel.aheadCall = it
+            })
         }
+
         btnZamijeniFragment.setOnClickListener {
-
-            if (!fragmentOne.diceRolled.contains(0)) {
-
 
                 brojac++
                 if (brojac == 1) {
                     supportFragmentManager.beginTransaction().apply {
-                        fragmentListic.diceRolled = fragmentOne.diceRolled
-                        replace(R.id.flFragmenti, fragmentListic,"Listic")
+                        replace(R.id.flFragmenti, fragmentYamb,"Listic")
                         addToBackStack("Listic")
                         btnZamijeniFragment.text = "KOCKICE"
                         commit()
@@ -41,26 +51,16 @@ class MainActivity : AppCompatActivity(), ISetButtonClickableState {
                 } else {
                     supportFragmentManager.beginTransaction().apply {
                         supportFragmentManager.popBackStack()
-                        fragmentOne.diceRolled = mutableListOf(0,0,0,0,0,0)
                         btnZamijeniFragment.text = "LISTIC"
-                        replace(R.id.flFragmenti, fragmentOne,"Kockice")
+                        replace(R.id.flFragmenti, fragmentCubes,"Kockice")
                         brojac = 0
-
                         commit()
+                        btnZamijeniFragment.isEnabled = false
                     }
                 }
             }
 
         }
-
-
-    }
-
-    override fun updateIsButtonClickable(keepItem: Boolean) {
-        if(keepItem)
-            btnZamijeniFragment.isEnabled = true
-    }
-
 
 }
 
