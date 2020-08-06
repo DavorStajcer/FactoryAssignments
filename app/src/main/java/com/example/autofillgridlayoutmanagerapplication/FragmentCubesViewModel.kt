@@ -8,7 +8,6 @@ import com.example.bacanjekockica.Cube
 class FragmentCubesViewModel : ViewModel() {
 
     var diceRolled = MutableLiveData<ArrayList<Int>>()
-    var aheadCall = MutableLiveData<Boolean>()
 
     val cubes = mutableListOf<Cube>(Cube(), Cube(), Cube(), Cube(), Cube(), Cube())
 

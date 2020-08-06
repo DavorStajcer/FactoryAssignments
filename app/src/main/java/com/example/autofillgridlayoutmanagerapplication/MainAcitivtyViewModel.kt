@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 
 class MainAcitivtyViewModel : ViewModel() {
 
+    var aheadCall : Boolean = false
+
     private val mutableListOfFirstColumn = mutableListOf<DataModel>(
         DataModel(R.layout.grid_layout_element_image,R.drawable.cube1),DataModel(R.layout.grid_layout_element_image,R.drawable.cube2),
         DataModel(R.layout.grid_layout_element_image,R.drawable.cube3),DataModel(R.layout.grid_layout_element_image,R.drawable.cube4),

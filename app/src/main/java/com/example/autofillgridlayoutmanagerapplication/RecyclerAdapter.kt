@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.lang.IllegalArgumentException
 
 
-val COLUMN_FINAL_RESULT_INDEX = 5
+
 
 
 
@@ -23,6 +23,7 @@ class RecyclerAdapter(
     private val enableButtonForChangingFragments : () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), IUpdateRecyclerState{
 
+    val COLUMN_FINAL_RESULT_INDEX = 5
     val itemClicked : MutableLiveData<ArrayList<Int>> = MutableLiveData()
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -43,7 +44,8 @@ class RecyclerAdapter(
             text.text = null
             text.background = null
 
-           // Log.i("tag","$position")
+            Log.i("opet","OPET -> BIND FUNKCIJA")
+
 
             val currentItem = getCurrentItem(position)
             val columnIndex = getColumnAndRowIndex(position)[0]
@@ -131,7 +133,7 @@ class RecyclerAdapter(
         setCurrentItemStats(positionOfItemSelectedInRecylcer,valueForInput)
         setResultRowValues(positionOfItemSelectedInRecylcer,valueForInput)
         disableItemClicks()
-        notfyRecyclerOfChanges(positionOfItemSelectedInRecylcer)
+       notfyRecyclerOfChanges(positionOfItemSelectedInRecylcer)
         enableButtonForChangingFragments()
     }
 

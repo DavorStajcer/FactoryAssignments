@@ -11,15 +11,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.autofillgridlayoutmanagerapplication.*
 import kotlinx.android.synthetic.main.fragment_yamb_ticket.*
 
-enum class DeviceWidthAndRowItemNumber(val value : Int){
-    DEVICE(1080),ITEM_NUMBER(6)
-}
 
-@Suppress("UNCHECKED_CAST")
 class FragmentYamb() : Fragment(){
 
     lateinit var viewModel: FragmentYambViewModel
-    val popUpWhenClicked = PopUpWhenClickedDialog()
+    private val popUpWhenClicked = PopUpWhenClickedDialog()
     lateinit var adapter : RecyclerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -37,17 +33,17 @@ class FragmentYamb() : Fragment(){
 
         viewModel = ViewModelProvider(this).get(FragmentYambViewModel::class.java)
 
+        @Suppress("UNCHECKED_CAST")
         viewModel.mutableMapOfElements =  bundle!!.getSerializable("daca") as HashMap<Int, MutableList<DataModel>>
 
         viewModel.diceRolled = bundle.getIntegerArrayList("diceRolled") as ArrayList<Int>
-        viewModel.aheadCall = bundle.getBoolean("aheadCall")
 
-        adapter = RecyclerAdapter(context!!.applicationContext,viewModel.mutableMapOfElements){
-            Log.i("tag","FOR ENABLING")
+        Log.i("opet","OPET -> FRAGMENT YAMB")
+        adapter = RecyclerAdapter(context!!.applicationContext,viewModel.mutableMapOfElements,bundle.getBoolean("aheadCall")){
             (activity as MainActivity).enableButtonForChangingFragments()
         }
 
-        val layoutManager = AutoFillGridLayoutManager(context!!.applicationContext,DeviceWidthAndRowItemNumber.DEVICE.value/DeviceWidthAndRowItemNumber.ITEM_NUMBER.value)
+        val layoutManager = AutoFillGridLayoutManager(context!!.applicationContext,ScreenValues.DEVICE_WIDTH.size/ScreenValues.COLUMN_NUMBER.size)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true
@@ -69,8 +65,7 @@ class FragmentYamb() : Fragment(){
     override fun onDetach() {
         super.onDetach()
         viewModel.updateLastItemClicked()
-        (activity as MainActivity).getMutableList(viewModel.mutableMapOfElements)
-
+        (activity as MainActivity).getMutableMapOfElements(viewModel.mutableMapOfElements)
     }
 }
 

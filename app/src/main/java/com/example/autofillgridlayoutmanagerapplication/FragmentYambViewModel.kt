@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 class FragmentYambViewModel : ViewModel() {
 
     var diceRolled : ArrayList<Int> = arrayListOf<Int>()
-    var aheadCall: Boolean = false
     var positionOfLastItemClicked : Int = 0
 
     var mutableMapOfElements  = hashMapOf<Int,MutableList<DataModel>>()

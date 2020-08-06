@@ -1,12 +1,13 @@
 package com.example.bacanjekockica
 
+import android.util.Log
 import android.widget.ImageView
 import com.example.autofillgridlayoutmanagerapplication.R
 import kotlin.random.Random
 
 class Cube(var pressed : Boolean = false, var currentPicture : Int = R.drawable.cube1){
 
-    private val pictures = hashMapOf<Int,Int>(
+    private val pictures = mapOf<Int,Int>(
         0 to R.drawable.cube1,
         1 to R.drawable.cube2,
         2 to R.drawable.cube3,

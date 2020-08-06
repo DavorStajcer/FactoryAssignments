@@ -8,14 +8,7 @@ import com.example.bacanjekockica.FragmentYamb
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.Serializable
 
-interface IGetDices{
-    fun getDices(diceRolled: ArrayList<Int>)
-    fun enableButtonForChangingFragments()
-    fun getAheadCall(aheadCall : Boolean)
-    fun getMutableList(mutablemapOfElements : MutableMap<Int, MutableList<DataModel>>)
-}
-
-class MainActivity : AppCompatActivity(), IGetDices{
+class MainActivity : AppCompatActivity(), IGetDataForPassingToFragmentYamb{
 
     private val fragmentCubes = FragmentCubes()
     private val fragmentYamb = FragmentYamb()
@@ -47,11 +40,14 @@ class MainActivity : AppCompatActivity(), IGetDices{
                 brojac++
                 if (brojac == 1) {
                     supportFragmentManager.beginTransaction().apply {
+                        Log.i("ahead","fragment Transaction ->${viewModel.aheadCall}")
+                        bundle.putBoolean("aheadCall",viewModel.aheadCall)
                         bundle.putSerializable("daca",viewModel.getMutableMapOfElements() as Serializable)
                         this@MainActivity.fragmentYamb.arguments = bundle
                         replace(R.id.flFragmenti, fragmentYamb,"Listic")
                         addToBackStack("Listic")
                         btnZamijeniFragment.text = "KOCKICE"
+                        this@MainActivity.viewModel.aheadCall = false
                         commit()
                         btnZamijeniFragment.isEnabled = false
                     }
@@ -79,10 +75,10 @@ class MainActivity : AppCompatActivity(), IGetDices{
     }
 
     override fun getAheadCall(aheadCall: Boolean) {
-        bundle.putBoolean("aheadCall",aheadCall)
+        this.viewModel.aheadCall = aheadCall
     }
 
-    override fun getMutableList(mutablemapOfElements: MutableMap<Int, MutableList<DataModel>>) {
+    override fun getMutableMapOfElements(mutablemapOfElements: MutableMap<Int, MutableList<DataModel>>) {
         viewModel.setMutableMapOfElements(mutablemapOfElements)
     }
 

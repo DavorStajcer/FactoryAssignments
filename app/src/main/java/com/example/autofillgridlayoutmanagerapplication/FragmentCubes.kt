@@ -30,9 +30,6 @@ class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
             (activity as MainActivity).getDices(it)
             (activity as MainActivity).enableButtonForChangingFragments()
         })
-        viewModel.aheadCall.observe(this, Observer {
-            (activity as MainActivity).getAheadCall(it)
-        })
 
         btnVrti.isEnabled = true
         btnNajava.isEnabled = false
@@ -48,16 +45,13 @@ class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
             }
             if(i == 2){
                 viewModel.setRolledNumbers()
-                btnNajava.isEnabled = false
                 btnVrti.isEnabled = false
             }
-
-
             i = 2
         }
 
         btnNajava.setOnClickListener { _ ->
-            this.viewModel.aheadCall.value = false
+            (activity as MainActivity).getAheadCall(true)
             btnNajava.isEnabled = false
             btnNajava.setBackgroundResource(R.drawable.btn_ahead_call_pressed)
         }
@@ -96,6 +90,8 @@ class FragmentCubes() : Fragment(R.layout.fragment_dice_roll){
             imageView.setImageResource(cubes[index].currentPicture)
        }
     }
+
+
 }
 
 
