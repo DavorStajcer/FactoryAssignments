@@ -7,18 +7,18 @@
     android:layout_height="match_parent"
     android:weightSum="10"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".changing_fragments.MainActivity">
 
 
 
     <FrameLayout
-        android:id="@+id/flFragmenti"
+        android:id="@+id/flFragments"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="9"/>
 
     <Button
-        android:id="@+id/btnZamijeniFragment"
+        android:id="@+id/btnChangeFragments"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:text="LISTIC"

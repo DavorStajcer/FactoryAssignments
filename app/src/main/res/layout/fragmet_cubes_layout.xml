@@ -62,7 +62,7 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <Button
-        android:id="@+id/btnVrti"
+        android:id="@+id/btnRollDice"
         android:layout_width="237dp"
         android:layout_height="62dp"
         android:layout_marginBottom="30dp"
@@ -73,14 +73,14 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btnNajava"
+        android:id="@+id/btnAheadCall"
         android:layout_width="115.5dp"
         android:layout_height="62dp"
         android:text="NAJAVA !"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@id/btnVrti"
+        app:layout_constraintBottom_toTopOf="@id/btnRollDice"
         android:background="@drawable/btn_ahead_call_selector"
         />
 

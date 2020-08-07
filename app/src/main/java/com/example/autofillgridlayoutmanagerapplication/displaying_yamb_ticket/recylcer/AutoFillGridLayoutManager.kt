@@ -1,4 +1,4 @@
-package com.example.autofillgridlayoutmanagerapplication
+package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer
 
 import android.content.Context
 import android.util.Log

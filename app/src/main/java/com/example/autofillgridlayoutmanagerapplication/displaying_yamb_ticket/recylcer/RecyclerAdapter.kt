@@ -1,4 +1,4 @@
-package com.example.autofillgridlayoutmanagerapplication
+package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer
 
 import android.content.Context
 import android.util.Log
@@ -7,24 +7,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IUpdateRecyclerState
+import com.example.autofillgridlayoutmanagerapplication.R
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.RowIndexOfResultElements
 import java.lang.IllegalArgumentException
-
-
-
-
 
 
 class RecyclerAdapter(
     private val context : Context,
     private val mutableMapOfColumns: MutableMap<Int,MutableList<DataModel>>,
     var aheadCallInYamb : Boolean = false,
-    private val enableButtonForChangingFragments : () -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), IUpdateRecyclerState{
+    private val enableButtonForChangingFragments : () -> Unit,
+    private val showPopUpDialog : (Int,Int) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), IUpdateRecyclerState {
 
     val COLUMN_FINAL_RESULT_INDEX = 5
-    val itemClicked : MutableLiveData<ArrayList<Int>> = MutableLiveData()
+
+
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
 
@@ -80,19 +80,19 @@ class RecyclerAdapter(
             if (currentItem.clickable && !currentItem.isValueSet) {
                 text.setBackgroundResource(R.drawable.text_view_for_input)    //ako je klikabilno, promijeni pozadinu
                 text.setOnClickListener {
-                    itemClicked.value = arrayListOf(position,rowIndex)
+                    showPopUpDialog(position,rowIndex)
                 }
             }
-
-
         }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
-            R.layout.grid_layout_element_text_view -> TextViewHolder(LayoutInflater.from(context).inflate(R.layout.grid_layout_element_text_view,parent,false))
-            R.layout.grid_layout_element_image -> ImageViewHolder(LayoutInflater.from(context).inflate(R.layout.grid_layout_element_image,parent,false))
+            R.layout.grid_layout_element_text_view -> TextViewHolder(LayoutInflater.from(context).inflate(
+                R.layout.grid_layout_element_text_view,parent,false))
+            R.layout.grid_layout_element_image -> ImageViewHolder(LayoutInflater.from(context).inflate(
+                R.layout.grid_layout_element_image,parent,false))
             else -> throw IllegalArgumentException("Unknown layout type.")
         }
     }
@@ -159,13 +159,16 @@ class RecyclerAdapter(
 
         return when(true){
             rowIndex < RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index -> {
-                getItemPosition(mutableMapOfColumns.size,currentItemPosition%mutableMapOfColumns.size,RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index)
+                getItemPosition(mutableMapOfColumns.size,currentItemPosition%mutableMapOfColumns.size,
+                    RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index)
             }
             rowIndex < RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index && rowIndex > RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index-> {
-                getItemPosition(mutableMapOfColumns.size,currentItemPosition%mutableMapOfColumns.size,RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index)
+                getItemPosition(mutableMapOfColumns.size,currentItemPosition%mutableMapOfColumns.size,
+                    RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index)
             }
             else -> {
-                getItemPosition(mutableMapOfColumns.size,currentItemPosition%mutableMapOfColumns.size,RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_THREE.index)
+                getItemPosition(mutableMapOfColumns.size,currentItemPosition%mutableMapOfColumns.size,
+                    RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_THREE.index)
             }
         }
     }
