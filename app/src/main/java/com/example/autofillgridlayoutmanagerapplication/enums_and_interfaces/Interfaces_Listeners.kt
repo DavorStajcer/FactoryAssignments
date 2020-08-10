@@ -7,8 +7,15 @@ interface IUpdateRecyclerState {
 
 interface ISetButtonForChangingFragments{
     fun setButtonForChangingFragments(value : Boolean)
+    fun setDiceRolledInYamb(diceRolled : List<Int>)
+    fun setAheadCallInYamb(aheadCall : Boolean)
 }
 
 interface ISetLastItemClickedInPopUpDialog {
-    fun setPopUpDialogText(itemClicked : Int, row : Int,diceRolled : MutableList<Int>)
+    fun setPopUpDialogText(itemClicked : Int, row : Int,diceRolled : List<Int>)
+}
+
+interface IGetDiceRolledToFragmentYamb{
+    fun getDiceRolled(diceRolled : List<Int>)
+    fun getAheadCall(aheadCall : Boolean)
 }

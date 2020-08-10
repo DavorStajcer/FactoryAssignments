@@ -145,7 +145,7 @@ class PopUpWhenClickedDialogViewModel (
         return this.valueForInput
     }
 
-    fun setDiceRolled(diceRolled : MutableList<Int>){
+    fun setDiceRolled(diceRolled : List<Int>){
         this.diceRolled = diceRolled
     }
 

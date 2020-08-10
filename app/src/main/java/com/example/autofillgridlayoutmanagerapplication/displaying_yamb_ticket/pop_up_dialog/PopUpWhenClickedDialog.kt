@@ -6,9 +6,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.autofillgridlayoutmanagerapplication.R
+import com.example.autofillgridlayoutmanagerapplication.changing_fragments.MainActivity
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer.RecyclerAdapter
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.ISetLastItemClickedInPopUpDialog
 import com.example.bacanjekockica.FragmentYamb
@@ -20,6 +22,7 @@ class PopUpWhenClickedDialog() : BottomSheetDialogFragment(), ISetLastItemClicke
     lateinit var viewModel : PopUpWhenClickedDialogViewModel
     lateinit var adapter : RecyclerAdapter
     lateinit var fragment : FragmentYamb
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -58,7 +61,7 @@ class PopUpWhenClickedDialog() : BottomSheetDialogFragment(), ISetLastItemClicke
     }
 
 
-    override fun setPopUpDialogText(itemClicked: Int, row: Int,diceRolled : MutableList<Int>) {
+    override fun setPopUpDialogText(itemClicked: Int, row: Int,diceRolled : List<Int>) {
         viewModel = ViewModelProvider(fragment).get(PopUpWhenClickedDialogViewModel::class.java)
         viewModel.setDiceRolled(diceRolled)
         viewModel.setTextForDisplay(itemClicked,row)

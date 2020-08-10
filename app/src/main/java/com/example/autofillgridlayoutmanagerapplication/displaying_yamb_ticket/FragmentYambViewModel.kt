@@ -1,90 +1,25 @@
-package com.example.autofillgridlayoutmanagerapplication.changing_fragment_data
+package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer.DataModel
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.RowIndexOfResultElements
-import com.example.bacanjekockica.Cube
-import java.lang.IllegalStateException
 
-class SharedViewModel : ViewModel() {
+enum class PopUpState(var position : Int = 0, var rowIndex: Int = 0){
+    SHOW,HIDE
+}
 
+class FragmentYambViewModel : ViewModel() {
 
-    var diceRolled = mutableListOf<Int>()
+    var diceRolled = listOf<Int>()
     var aheadCall = false
 
-//FRAGMENT CUBES --------------------------------------------------------
-
-    private val pictures = mapOf<Int,Int>(
-        0 to R.drawable.cube1,
-        1 to R.drawable.cube2,
-        2 to R.drawable.cube3,
-        3 to R.drawable.cube4,
-        4 to R.drawable.cube5,
-        5 to R.drawable.cube6
-    )
-    val cubes = MutableLiveData(
-        mutableListOf(
-            Cube(pictures = pictures), Cube(pictures = pictures),
-            Cube(pictures = pictures), Cube(pictures = pictures),
-            Cube(pictures = pictures), Cube(pictures = pictures)
-        )
-    )
-    val setListeners = MutableLiveData<Boolean>()
-    val buttonForChangingFragmentsIsEnabled = MutableLiveData<Boolean>()
-    val buttonForRollingCubesIsEnabled = MutableLiveData<Boolean>()
-    val buttonForAheadCallIsEnabled = MutableLiveData<Boolean>(false)
-
-    private var buttonPressedCounter = 0
-
-    fun rollDice() {
-        val cubesForRolling = cubes.value
-        for (cube in cubesForRolling ?: throw IllegalStateException("Value of cubes mutableLiveData is null!?"))
-            cube.rollDice()
-        cubes.value = cubesForRolling
-        buttonPressedCounter++
-        if(buttonPressedCounter == 1){
-            aheadCall = false
-            setListeners.value = !(setListeners.value ?: false)
-            buttonForAheadCallIsEnabled.value = true
-        }
-        else{
-            buttonForChangingFragmentsIsEnabled.value = true
-            buttonForRollingCubesIsEnabled.value = false
-            buttonForAheadCallIsEnabled.value = false
-            buttonPressedCounter = 0
-        }
-
-        setRolledNumbers()
-    }
-
-    private fun setRolledNumbers() {
-
-        val numbers = mutableListOf<Int>()
-        for ((index, cube) in (cubes.value ?: throw IllegalStateException("Value of cubes mutableLiveData is null!?") ).withIndex()) {
-            when (cube.currentPicture) {
-                R.drawable.cube1 -> numbers.add(1)
-                R.drawable.cube2 -> numbers.add(2)
-                R.drawable.cube3 -> numbers.add(3)
-                R.drawable.cube4 -> numbers.add(4)
-                R.drawable.cube5 ->numbers.add(5)
-                R.drawable.cube6 -> numbers.add(6)
-                else ->    throw IllegalStateException("Index value of cube field is more than 5 !?")
-            }
-
-        }
-        this.diceRolled = numbers
-    }
-
-    fun changeCubePressedState(cubeNumber : Int){
-        (cubes.value ?: throw IllegalStateException("Value of cubes mutableLiveData is null!?") )[cubeNumber].pressed = !(cubes.value ?: throw IllegalStateException("Value of cubes mutableLiveData is null!?"))[cubeNumber].pressed
-    }
-
-//----FRAGMENT CUBES --------------------------------------------------------
-
-//FRAGMENT YAMB -----------------------------------------------------------------
+    private val  isPopUpEnabled_ : MutableLiveData<PopUpState> = MutableLiveData()
+    val isPopUpEnabled : LiveData<PopUpState>
+        get()= isPopUpEnabled_
 
     private val mutableListOfFirstColumn = mutableListOf<DataModel>(
         DataModel(
@@ -151,7 +86,7 @@ class SharedViewModel : ViewModel() {
             R.layout.grid_layout_element_image,
             R.drawable.zbroj_od_dva_para_do_yamba
         )
-)
+    )
     private val mutableListOfSecondColumns = mutableListOf<DataModel>(
         DataModel(
             R.layout.grid_layout_element_text_view,
@@ -429,7 +364,7 @@ class SharedViewModel : ViewModel() {
         5 to mutableListOfSixthColumn
     )
 
-    var positionOfLastItemClicked : Int = 0
+    private var positionOfLastItemClicked : Int = 0
 
     fun updateLastItemClicked() {
 
@@ -448,8 +383,13 @@ class SharedViewModel : ViewModel() {
                     mutableMapOfElements[column]!![row].clickable = true
             }
         }
-        this.buttonForRollingCubesIsEnabled.value = true
-        this.buttonForChangingFragmentsIsEnabled.value = false
+    }
+
+    fun changePopUpState(position: Int,rowIndex: Int){
+        PopUpState.SHOW.position = position
+        PopUpState.SHOW.rowIndex = rowIndex
+        isPopUpEnabled_.value = PopUpState.SHOW
+        isPopUpEnabled_.value = PopUpState.HIDE
     }
 
     private fun getItemPosition(numberOfColumns : Int,columnIndex : Int, rowIndex :Int) : Int{
@@ -483,13 +423,7 @@ class SharedViewModel : ViewModel() {
         this.mutableMapOfElements = mutableMapOfColumns
     }
 
-
     fun getMutableMapOfElements() : MutableMap<Int, MutableList<DataModel>>{
         return mutableMapOfElements
     }
- //FRAGMENT YAMB -----------------------------------------------------------------
-
-
 }
-
-

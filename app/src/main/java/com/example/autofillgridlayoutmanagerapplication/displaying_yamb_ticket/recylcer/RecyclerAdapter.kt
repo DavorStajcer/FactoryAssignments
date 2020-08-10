@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IUpdateRecyclerState
 import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.RowIndexOfResultElements
+import com.example.bacanjekockica.FragmentYamb
 import java.lang.IllegalArgumentException
 
 
@@ -23,8 +25,6 @@ class RecyclerAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), IUpdateRecyclerState {
 
     val COLUMN_FINAL_RESULT_INDEX = 5
-
-
 
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
 
@@ -44,9 +44,6 @@ class RecyclerAdapter(
             text.text = null
             text.background = null
 
-            Log.i("opet","OPET -> BIND FUNKCIJA")
-
-
             val currentItem = getCurrentItem(position)
             val columnIndex = getColumnAndRowIndex(position)[0]
             val rowIndex = getColumnAndRowIndex(position)[1]
@@ -54,7 +51,6 @@ class RecyclerAdapter(
 
             if (columnIndex == 4 && aheadCallInYamb  && !currentItem.isValueSet)
                 mutableMapOfColumns[columnIndex]!![rowIndex].clickable = true          //ako je zvana najava, stavi mi najavu na klikabilno,
-
 
 
             if(!checkIsRowANotResult(rowIndex)){
