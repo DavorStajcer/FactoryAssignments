@@ -9,6 +9,8 @@ import kotlin.math.max
 
 class AutoFillGridLayoutManager(context: Context,var columnWidth : Int, var columnWidthChanged : Boolean = true) : GridLayoutManager(context,columnWidth) {
 
+    private var isScrollingEnabled = true
+
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
         Log.i("WIDTH", "SPAN ( TOTAL/COLUMNWIDHT = $columnWidth")
         if(columnWidthChanged && columnWidth > 0) {
@@ -23,5 +25,13 @@ class AutoFillGridLayoutManager(context: Context,var columnWidth : Int, var colu
         }
         Log.i("WIDTH", width.toString())
         super.onLayoutChildren(recycler, state)
+    }
+
+    fun setRecyclerScrolling(scrollingState : Boolean){
+        this.isScrollingEnabled = scrollingState
+    }
+
+    override fun canScrollVertically(): Boolean {
+        return this.isScrollingEnabled && super.canScrollVertically()
     }
 }

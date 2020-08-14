@@ -1,429 +1,133 @@
 package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.autofillgridlayoutmanagerapplication.R
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer.DataModel
-import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.RowIndexOfResultElements
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer.ItemInRecycler
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.*
 
-enum class PopUpState(var position : Int = 0, var rowIndex: Int = 0){
-    SHOW,HIDE
-}
 
 class FragmentYambViewModel : ViewModel() {
 
     var diceRolled = listOf<Int>()
-    var aheadCall = false
+    var onClickItemPosition = 0
+
+    private val aheadCall_ : MutableLiveData<AheadCall> = MutableLiveData()
+    val aheadCall : LiveData<AheadCall>
+        get() = aheadCall_
 
     private val  isPopUpEnabled_ : MutableLiveData<PopUpState> = MutableLiveData()
     val isPopUpEnabled : LiveData<PopUpState>
         get()= isPopUpEnabled_
 
-    private val mutableListOfFirstColumn = mutableListOf<DataModel>(
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.cube1
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.cube2
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.cube3
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.cube4
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.cube5
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.cube6
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.zbroj_od_jedan_do_deset
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.max
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.min
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.max_min
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.dva_para
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.straight
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.full
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.poker
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.yamb
-        ),
-        DataModel(
-            R.layout.grid_layout_element_image,
-            R.drawable.zbroj_od_dva_para_do_yamba
-        )
-    )
-    private val mutableListOfSecondColumns = mutableListOf<DataModel>(
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        )
-    )
-    private val mutableListOfThirdColumn= mutableListOf<DataModel>(
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        )
-    )
-    private val mutableListOfForuthColumn= mutableListOf<DataModel>(
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view,
-            clickable = true
-        )
-    )
-    private val mutableListOfFifthColumn= mutableListOf<DataModel>(
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        )
-    )
-    private val mutableListOfSixthColumn= mutableListOf<DataModel>(
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        ),
-        DataModel(
-            R.layout.grid_layout_element_text_view
-        )
-    )
-    private var  mutableMapOfElements = mutableMapOf<Int,MutableList<DataModel>>(
-        0 to mutableListOfFirstColumn ,
-        1 to  mutableListOfSecondColumns,
-        2 to mutableListOfThirdColumn,
-        3 to mutableListOfForuthColumn,
-        4 to mutableListOfFifthColumn,
-        5 to mutableListOfSixthColumn
-    )
+    private val  isRecyclerEnabled_ : MutableLiveData<Recycler> = MutableLiveData(Recycler.ENABLED)
+    val isRecyclerEnabled : LiveData<Recycler>
+        get()= isRecyclerEnabled_
 
-    private var positionOfLastItemClicked : Int = 0
+    private val itemsInRecycler_ : MutableLiveData<List<ItemInRecycler>> = MutableLiveData()
+    val itemsInRecycler : LiveData<List<ItemInRecycler>>
+        get() = itemsInRecycler_
 
-    fun updateLastItemClicked() {
+    private val sendDataToPopUp_ : MutableLiveData<SendingDataToPopUp> = MutableLiveData()
+    val sendDataToPopUp : LiveData<SendingDataToPopUp>
+        get() = sendDataToPopUp_
 
-        Log.i("CLICKED", "$positionOfLastItemClicked")
+    private val isButtonForChangingFragmentsEnabled_ : MutableLiveData<ButtonForChangingFragmentsState> = MutableLiveData()
+    val isButtonForChangingFragmentsEnabled : LiveData<ButtonForChangingFragmentsState>
+        get() = isButtonForChangingFragmentsEnabled_
 
-        if (!mutableMapOfElements[1]!![0].isValueSet)
-            mutableMapOfElements[1]!![0].clickable = true
-        if (!mutableMapOfElements[2]!![14].isValueSet)
-            mutableMapOfElements[2]!![14].clickable = true
+    private val finishedGame_ = MutableLiveData<FinishGameState>(FinishGameState.NOT_FINISHED)
+    val  finishGameState : LiveData<FinishGameState>
+        get() = finishedGame_
 
-        setNextItemClickable(mutableMapOfElements)
-
-        for ((column, arreydDataModel) in mutableMapOfElements) {
-            for ((row, dataModel) in arreydDataModel.withIndex()) {
-                if (column == 3 && !mutableMapOfElements[column]!![row].isValueSet)
-                    mutableMapOfElements[column]!![row].clickable = true
-            }
-        }
+    init {
+       // generateStartingItems()
+        generateStartingTestItems()
     }
 
-    fun changePopUpState(position: Int,rowIndex: Int){
+
+
+
+    fun changeItemsWhenAheadCallIsCalled(){
+        this.itemsInRecycler_.value = ItemListAndStatsGenerator.getAheadCallPressedList()
+    }
+
+    fun changeItemsWhenPopUpForEnteringValuesCloses(valueOfItemPicked: Int){
+
+        this.itemsInRecycler_.value = ItemListAndStatsGenerator.getNewList(onClickItemPosition,valueOfItemPicked)
+
+        if(ItemListAndStatsGenerator.isGameFinished()){
+            changeIsGameFinishedState()
+            changeIsRecyclerScrollingAndClickingEnabled()
+        }
+        freezeAllItems()
+    }
+
+    fun changeIsGameFinishedState(){
+        if(finishedGame_.value == FinishGameState.FINISHED)
+            finishedGame_.value = FinishGameState.NOT_FINISHED
+        else{
+            FinishGameState.FINISHED.totalPoints = ItemListAndStatsGenerator.getTotalPoints()
+            finishedGame_.value = FinishGameState.FINISHED
+        }
+
+    }
+
+    fun unFreezeAllItems(){
+        this.itemsInRecycler_.value = ItemListAndStatsGenerator.getUnfreezedList()
+    }
+
+    fun changeIsPopUpDialogEnabledState(position: Int){
+        this.onClickItemPosition = position
         PopUpState.SHOW.position = position
-        PopUpState.SHOW.rowIndex = rowIndex
         isPopUpEnabled_.value = PopUpState.SHOW
         isPopUpEnabled_.value = PopUpState.HIDE
     }
 
-    private fun getItemPosition(numberOfColumns : Int,columnIndex : Int, rowIndex :Int) : Int{
-        return numberOfColumns*rowIndex + columnIndex
+    fun enableSendingDataToPup(){
+        SendingDataToPopUp.ENABLED.diceRolled = diceRolled
+        SendingDataToPopUp.ENABLED.position = onClickItemPosition
+        sendDataToPopUp_.value = SendingDataToPopUp.ENABLED
+        sendDataToPopUp_.value = SendingDataToPopUp.DISABLED
     }
 
-    private fun setNextItemClickable(mutableMapOfColumns : MutableMap<Int,MutableList<DataModel>>) {
+    fun changeAheadCall(aheadCall: Boolean){
+        if(aheadCall)
+            this.aheadCall_.value = AheadCall.CALLED
+        else
+            this.aheadCall_.value = AheadCall.NOT_CALLED
+    }
 
-        for((column,arrayDataModel) in mutableMapOfColumns){
-            for((row,dataModel) in arrayDataModel.withIndex()){
-                if(column == 1 && !dataModel.isValueSet){
-                    if(row != RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index && row != RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index  && row != RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_THREE.index){
-                        dataModel.clickable = true
-                        break
-                    }
-                }
-                if(column == 2 && dataModel.isValueSet){
-                    if(row == 0)
-                        break
-                    if(row == RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index + 1 || row == RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index + 1){
-                        Log.i("ajde","dole -> ${getItemPosition(6,column,row)}")
-                        mutableMapOfColumns[column]!![row - 2].clickable = true
-                        break
-                    }
-                    Log.i("ajde","dole, preskok -> ${getItemPosition(6,column,row)}")
-                    mutableMapOfColumns[column]!![row - 1].clickable = true
-                    break
-                }
-            }
+    fun changeIsRecyclerScrollingAndClickingEnabled(){
+        if(isRecyclerEnabled_.value == Recycler.ENABLED)
+            isRecyclerEnabled_.value = Recycler.DISABLED
+        else
+            isRecyclerEnabled_.value = Recycler.ENABLED
+    }
+
+    fun resetAllItems(){
+         this.generateStartingItems()
+    }
+
+    fun changeButtonForChangingFragmentsState(){
+        if( isButtonForChangingFragmentsEnabled_.value == ButtonForChangingFragmentsState.ENABLED )
+            isButtonForChangingFragmentsEnabled_.value = ButtonForChangingFragmentsState.DISABLED
+        else{
+            if(finishGameState.value == FinishGameState.NOT_FINISHED)
+                isButtonForChangingFragmentsEnabled_.value = ButtonForChangingFragmentsState.ENABLED
         }
-        this.mutableMapOfElements = mutableMapOfColumns
     }
 
-    fun getMutableMapOfElements() : MutableMap<Int, MutableList<DataModel>>{
-        return mutableMapOfElements
+    private fun generateStartingItems(){
+      this.itemsInRecycler_.value = ItemListAndStatsGenerator.generateStartingItems()
     }
+
+    private fun freezeAllItems(){ //make them unclickable
+        this.itemsInRecycler_.value = ItemListAndStatsGenerator.getFreezedList()
+    }
+
+    private fun generateStartingTestItems() {
+        itemsInRecycler_.value = ItemListAndStatsGenerator.generateStartingTestItems()
+    }
+
 }

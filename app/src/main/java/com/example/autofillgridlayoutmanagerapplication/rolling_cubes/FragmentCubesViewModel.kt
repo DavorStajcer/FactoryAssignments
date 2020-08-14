@@ -5,8 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.autofillgridlayoutmanagerapplication.R
+import com.example.autofillgridlayoutmanagerapplication.changing_fragments.MainActivity
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.ICubeDataReciver
 import com.example.bacanjekockica.Cube
 import java.lang.IllegalStateException
+
+
 
 class FragmentCubesViewModel : ViewModel() {
 
@@ -17,12 +21,12 @@ class FragmentCubesViewModel : ViewModel() {
     private val aheadCall_ = MutableLiveData<Boolean>()
     val aheadCall : LiveData<Boolean>
         get() = aheadCall_
-
-    val setListeners = MutableLiveData<Boolean>()
     private val buttonForChangingFragmentsIsEnabled_ = MutableLiveData<Boolean>()
         val buttonForChangingFragmentsIsEnabled : LiveData<Boolean>
         get() = buttonForChangingFragmentsIsEnabled_
 
+    var cubeDataListener : ICubeDataReciver? = null
+    val setListeners = MutableLiveData<Boolean>()
     val buttonForRollingCubesIsEnabled = MutableLiveData<Boolean>()
     val buttonForAheadCallIsEnabled = MutableLiveData<Boolean>(false)
 
@@ -95,4 +99,15 @@ class FragmentCubesViewModel : ViewModel() {
     fun changeAheadCall(){
         aheadCall_.value = true
     }
+
+    fun sendAheadCallToActivity(state : Boolean){
+        cubeDataListener?.setAheadCallInYamb(this.aheadCall.value!!)
+    }
+    fun sendDiceRolledToActivity(diceRolled : List<Int>){
+        cubeDataListener?.setDiceRolledInYamb(diceRolled)
+    }
+    fun changeBottonForChangingFragmentsState(state : Boolean){
+        cubeDataListener?.setButtonForChangingFragments(state)
+    }
+
 }

@@ -7,13 +7,23 @@ import androidx.lifecycle.ViewModel
 import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.RowIndexOfResultElements
 
+
+enum class SendDataOfItemChosen(var positionOfItemChosen : Int, var valueForInput : Int){
+    ENABLED(0,0),DISABLED(0,0)
+}
+
 class PopUpWhenClickedDialogViewModel (
 )  : ViewModel(){
 
-
-    private var valueForInput: Int = 0
-    var positionOfItemClickedInRecycler = 0
     private var diceRolled = listOf<Int>()
+
+    private val sendingDataOfItemChosen_ = MutableLiveData<SendDataOfItemChosen>()
+    val sendingDataOfItemChosen : LiveData<SendDataOfItemChosen>
+        get() = sendingDataOfItemChosen_
+    private var positionOfItemClickedInRecycler = 0
+    private var valueForInput = 0
+
+
 
 
     private val text_ = MutableLiveData<String>()
@@ -47,12 +57,13 @@ class PopUpWhenClickedDialogViewModel (
         pictureSources_.value = pictureSourceList
     }
 
-    fun setTextForDisplay(positionOfItemClickedInRecycler: Int,rowIndex: Int) {
+    fun setTextForDisplay(positionOfItemClickedInRecycler: Int) {
+
+        val rowIndex = positionOfItemClickedInRecycler / 6
 
         Log.i("row","POPuP,ViewModel , row -> $rowIndex")
-
-        this.valueForInput = 0
         this.positionOfItemClickedInRecycler = positionOfItemClickedInRecycler
+        this.valueForInput = 0
 
         val MAX_INDEX = 7
         val MIN_INDEX = 8
@@ -76,8 +87,6 @@ class PopUpWhenClickedDialogViewModel (
 
             when (rowIndex) {
                 MAX_INDEX -> {
-
-                    val temp = 0
 
                     for ((index, member) in diceRolled.withIndex()) {
                         for ((index_two, number) in diceRolled.withIndex()) {
@@ -141,8 +150,12 @@ class PopUpWhenClickedDialogViewModel (
         setCubePictureSoruce()
     }
 
-    fun getValueForInput() : Int {
-        return this.valueForInput
+    fun sendDataOfItemPickedBack(){
+        SendDataOfItemChosen.ENABLED.positionOfItemChosen = positionOfItemClickedInRecycler
+        SendDataOfItemChosen.ENABLED.valueForInput = valueForInput
+        sendingDataOfItemChosen_.value = SendDataOfItemChosen.ENABLED
+        sendingDataOfItemChosen_.value = SendDataOfItemChosen.DISABLED
+
     }
 
     fun setDiceRolled(diceRolled : List<Int>){

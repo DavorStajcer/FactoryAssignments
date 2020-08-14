@@ -12,6 +12,7 @@ import com.example.autofillgridlayoutmanagerapplication.changing_fragments.MainA
 import com.example.autofillgridlayoutmanagerapplication.R
 
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.CubeIndexes
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.ICubeDataReciver
 import com.example.bacanjekockica.Cube
 import kotlinx.android.synthetic.main.fragmet_cubes_layout.*
 
@@ -21,13 +22,16 @@ class FragmentCubes() : Fragment(R.layout.fragmet_cubes_layout){
 
     lateinit var viewModel : FragmentCubesViewModel
     lateinit var imageViews : List<ImageView>
+    var a : ICubeDataReciver? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
          viewModel = ViewModelProvider(requireActivity()).get(FragmentCubesViewModel::class.java)
+        viewModel.cubeDataListener = activity as ICubeDataReciver
 
         imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
+
 
         viewModel.setListeners.observe(viewLifecycleOwner, Observer {
             addListeners()
@@ -36,23 +40,22 @@ class FragmentCubes() : Fragment(R.layout.fragmet_cubes_layout){
             displayCubes(imageViews,it)
         })
 
-        viewModel.buttonForChangingFragmentsIsEnabled.observe(viewLifecycleOwner, Observer {
-            Log.i("buttonChange","FRAGMENT CUBES, value -> $it")
-            (activity as MainActivity).setButtonForChangingFragments(it)
-        })
         viewModel.buttonForAheadCallIsEnabled.observe(viewLifecycleOwner, Observer {
             btnAheadCall.isEnabled = it
         })
         viewModel.buttonForRollingCubesIsEnabled.observe(viewLifecycleOwner, Observer<Boolean>{
-            Log.i("buttonChange","BUTTON FRO ROLLING CUBES -> $it")
+
             btnRollDice.isEnabled = it
         })
 
+        viewModel.buttonForChangingFragmentsIsEnabled.observe(viewLifecycleOwner, Observer {
+            viewModel.changeBottonForChangingFragmentsState(it)
+        })
         viewModel.diceRolled.observe(viewLifecycleOwner, Observer {
-            (activity as MainActivity).setDiceRolledInYamb(it)
+            viewModel.sendDiceRolledToActivity(it)
         })
         viewModel.aheadCall.observe(viewLifecycleOwner, Observer {
-            (activity as MainActivity).setAheadCallInYamb(it)
+           viewModel.sendAheadCallToActivity(it)
         })
 
 
