@@ -61,6 +61,7 @@ class FragmentCubes() : Fragment(R.layout.fragmet_cubes_layout){
 
         btnRollDice.setOnClickListener { _ ->
             viewModel.rollDice()
+            viewModel.changeViewPastGamesButtonState(false)
         }
 
         btnAheadCall.setOnClickListener { _ ->

@@ -9,6 +9,20 @@
     tools:context=".changing_fragments.MainActivity">
 
     <TextView
+        android:id="@+id/tvTest"
+        android:layout_width="330dp"
+        android:layout_height="400dp"
+        android:textSize="10sp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="250dp"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:layout_marginTop="250dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttonLayout" />
+
+
+    <TextView
         android:id="@+id/tvGameOverPoints"
         android:layout_width="130dp"
         android:layout_height="56dp"
@@ -37,7 +51,7 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
     <ImageView
-        android:id="@+id/arrowOnwards"
+        android:id="@+id/ivArrowOnwards"
         android:layout_width="130dp"
         android:layout_height="82dp"
         android:visibility="gone"
@@ -47,14 +61,14 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvGameOverPointsResult" />
     <ImageView
-        android:id="@+id/previousResults"
+        android:id="@+id/ivPreviosResluts"
         android:layout_width="130dp"
         android:layout_height="82dp"
         android:layout_marginTop="200dp"
         android:layout_marginRight="50dp"
         android:visibility="gone"
         android:src="@drawable/ic_baseline_sd_storage_24"
-        app:layout_constraintRight_toLeftOf="@id/arrowOnwards"
+        app:layout_constraintRight_toLeftOf="@id/ivArrowOnwards"
         app:layout_constraintTop_toBottomOf="@id/tvGameOverPoints" />
 
     <FrameLayout
@@ -77,10 +91,10 @@
     app:layout_constraintRight_toRightOf="parent">
 
     <Button
-        android:id="@+id/btnPastGames"
+        android:id="@+id/btnViewGamesPlayed"
         android:layout_width="0dp"
         android:layout_height="90dp"
-        android:text="SAVED GAMES"
+        android:text="PAST GAMES"
         android:textSize="22sp"
         android:layout_weight="1" />
 

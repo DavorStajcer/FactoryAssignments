@@ -1,10 +1,21 @@
 package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.autofillgridlayoutmanagerapplication.database.ColumnInYamb
+import com.example.autofillgridlayoutmanagerapplication.database.GameStat
+import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer.ItemInRecycler
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.*
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class FragmentYambViewModel : ViewModel() {
@@ -43,6 +54,78 @@ class FragmentYambViewModel : ViewModel() {
     init {
        // generateStartingItems()
         generateStartingTestItems()
+    }
+
+
+    fun saveGame(context : Context){
+
+        val databaseInstance = GamesPlayedDatabase.getInstanceOfDatabase(context)
+        val  gameStatsDao = databaseInstance.getGameStatsDao()
+        val  columnsDao = databaseInstance.getColumnDao()
+
+        Log.i("tag","\n\n\n\n\n\n\n\n\n\nMAP OF ROWS : \n\n${ItemListAndStatsGenerator.getMapOfRows()}")
+
+
+
+       val disposalbe = Completable.fromAction {
+
+           val calendar = Calendar.getInstance()
+           val dateFormat = SimpleDateFormat("MM/dd/yyyy");
+           val date = dateFormat.format(calendar.getTime());
+           val totalPoints = ItemListAndStatsGenerator.getTotalPoints()
+
+
+           val currentInsertedGameId = gameStatsDao.insertGameStats(
+               GameStat(0,date,totalPoints)
+           )
+
+           val mapOfPlayedRows = ItemListAndStatsGenerator.getMapOfRows()
+           val listOfColumnsInYamb = mutableListOf<ColumnInYamb>()
+
+           for((key,rowList) in mapOfPlayedRows){
+               listOfColumnsInYamb.add(key, ColumnInYamb(
+                   columnId = 0,
+                   correspondingGameId = currentInsertedGameId,
+                   one = rowList[0],
+                   two = rowList[1],
+                   three = rowList[2],
+                   four = rowList[3],
+                   five = rowList[4],
+                   six = rowList[5],
+                   sum_form_one_to_six = rowList[6],
+                   max = rowList[7],
+                   min = rowList[8],
+                   max_min= rowList[9],
+                   two_pairs = rowList[10],
+                   straight = rowList[11],
+                   full = rowList[12],
+                   poker = rowList[13],
+                   yamb = rowList[14],
+                   sum_from_two_pairs_to_yamb = rowList[15]
+               ))
+           }
+
+           Log.i("tag","COLUMNS : \n\n$listOfColumnsInYamb \n\n")
+
+
+
+                     Log.i("tag","COLUMNS : \n\n$listOfColumnsInYamb \n\n")
+
+                   columnsDao.insertColumns(
+                         listOfColumnsInYamb[0],
+                         listOfColumnsInYamb[1],
+                         listOfColumnsInYamb[2],
+                         listOfColumnsInYamb[3],
+                         listOfColumnsInYamb[4]
+                     )
+
+       }.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({Toast.makeText(context,"Game saved.", Toast.LENGTH_SHORT).show()}){
+                Log.i("tag",it.message ?: "nema throwable message")
+            }
+
+
     }
 
 
@@ -106,7 +189,7 @@ class FragmentYambViewModel : ViewModel() {
     }
 
     fun resetAllItems(){
-         this.generateStartingItems()
+        this.generateStartingItems()
     }
 
     fun changeButtonForChangingFragmentsState(){

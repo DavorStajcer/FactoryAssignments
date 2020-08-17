@@ -51,15 +51,16 @@ class FragmentCubesViewModel : ViewModel() {
     private var buttonPressedCounter = 0
 
     fun rollDice() {
-        val cubesForRolling = cubes.value
-        for (cube in cubesForRolling ?: throw IllegalStateException("Value of cubes mutableLiveData is null!?"))
-            cube.rollDice()
-        cubes.value = cubesForRolling
+
+        rollEachCube()
+
         buttonPressedCounter++
-        if(buttonPressedCounter == 1){
+
+        if(isButtonPressedFirstTime()){
             aheadCall_.value = false
             setListeners.value = !(setListeners.value ?: false)
             buttonForAheadCallIsEnabled.value = true
+
         }
         else{
             buttonForChangingFragmentsIsEnabled_.value = true
@@ -68,6 +69,20 @@ class FragmentCubesViewModel : ViewModel() {
             buttonPressedCounter = 0
             setRolledNumbers()
         }
+
+    }
+
+    private fun rollEachCube(){
+        val cubesForRolling = cubes.value
+
+        for (cube in cubesForRolling ?: throw IllegalStateException("Value of cubes mutableLiveData is null!?"))
+            cube.rollDice()
+
+        cubes.value = cubesForRolling
+    }
+
+    private fun isButtonPressedFirstTime() : Boolean{
+        return buttonPressedCounter == 1
     }
 
     private fun setRolledNumbers() {
@@ -86,6 +101,10 @@ class FragmentCubesViewModel : ViewModel() {
 
         }
         this.diceRolled_.value = numbers
+    }
+
+    fun changeViewPastGamesButtonState(state : Boolean){
+        cubeDataListener!!.changeViewPastGamesButtonState(state)
     }
 
     fun changeCubePressedState(cubeNumber : Int){

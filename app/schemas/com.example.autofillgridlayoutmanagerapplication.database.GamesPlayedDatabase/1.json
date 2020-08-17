@@ -1,0 +1,167 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "a05c29f3af75ebffa8990e9c086419bc",
+    "entities": [
+      {
+        "tableName": "game_stats_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` TEXT NOT NULL, `totalPoints` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "gameId",
+            "columnName": "gameId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalPoints",
+            "columnName": "totalPoints",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "gameId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "column_in_yamb_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`columnId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `gameId` INTEGER NOT NULL, `one` INTEGER NOT NULL, `two` INTEGER NOT NULL, `three` INTEGER NOT NULL, `four` INTEGER NOT NULL, `five` INTEGER NOT NULL, `six` INTEGER NOT NULL, `sum_form_one_to_six` INTEGER NOT NULL, `max` INTEGER NOT NULL, `min` INTEGER NOT NULL, `max_min` INTEGER NOT NULL, `two_pairs` INTEGER NOT NULL, `straight` INTEGER NOT NULL, `full` INTEGER NOT NULL, `poker` INTEGER NOT NULL, `yamb` INTEGER NOT NULL, `sum_from_two_pairs_to_yamb` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "columnId",
+            "columnName": "columnId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gameId",
+            "columnName": "gameId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "one",
+            "columnName": "one",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "two",
+            "columnName": "two",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "three",
+            "columnName": "three",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "four",
+            "columnName": "four",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "five",
+            "columnName": "five",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "six",
+            "columnName": "six",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sum_form_one_to_six",
+            "columnName": "sum_form_one_to_six",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "max",
+            "columnName": "max",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "min",
+            "columnName": "min",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "max_min",
+            "columnName": "max_min",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "two_pairs",
+            "columnName": "two_pairs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "straight",
+            "columnName": "straight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "full",
+            "columnName": "full",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "poker",
+            "columnName": "poker",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "yamb",
+            "columnName": "yamb",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sum_from_two_pairs_to_yamb",
+            "columnName": "sum_from_two_pairs_to_yamb",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "columnId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a05c29f3af75ebffa8990e9c086419bc\")"
+    ]
+  }
+}

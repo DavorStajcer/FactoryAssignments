@@ -11,9 +11,9 @@ import com.example.autofillgridlayoutmanagerapplication.R
 import java.lang.IllegalArgumentException
 
 
-class RecyclerAdapter(
+class RecyclerAdapterForDisplayingYambGame(
     private val context : Context,
-    private val itemsInRecycler : List<ItemInRecycler>,
+    private var itemsInRecycler : List<ItemInRecycler>,
     private val onTextClicked : (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -88,6 +88,12 @@ class RecyclerAdapter(
                 }
         }
 
+    }
+
+
+    fun changeYambGameForDisplay(newList :List<ItemInRecycler>){
+        this.itemsInRecycler = newList
+        notifyDataSetChanged()
     }
 
 

@@ -37,3 +37,8 @@ enum class Recycler{
 enum class ButtonForChangingFragmentsState{
     ENABLED,DISABLED
 }
+
+enum class Adapters(){
+    GAME_STATS(),YAMB_GAME()
+}
+

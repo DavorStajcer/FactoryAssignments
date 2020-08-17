@@ -1,13 +1,13 @@
 package com.example.autofillgridlayoutmanagerapplication.changing_fragments
 
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import io.reactivex.Observable
 
-enum class Fragments(val buttonText : String){
-    FRAGMENT_CUBES("YAMB"),FRAGMENT_YAMB("CUBES")
+enum class Fragments(var buttonText : String){
+    FRAGMENT_CUBES("YAMB"),FRAGMENT_YAMB("CUBES"),FRAGMENT_PAST_GAMES("PAST GAMES")
 }
 
 enum class FinishedScreen{
@@ -17,9 +17,13 @@ enum class FinishedScreen{
 
 class MainAcitivtyViewModel : ViewModel() {
 
-    private val isButtonEnabled_ = MutableLiveData<Boolean>(false)
-    val isButtonEnabled : LiveData<Boolean>
-        get() = isButtonEnabled_
+    private val isButtonForChangingFragmentsEnabled_ = MutableLiveData<Boolean>(false)
+    val isButtonForChangingFragmentsEnabled : LiveData<Boolean>
+        get() = isButtonForChangingFragmentsEnabled_
+
+    private val isButtonForViewingGamesPlayedEnabled_ = MutableLiveData<Boolean>(true)
+    val isButtonForViewingGamesPlayedEnabled : LiveData<Boolean>
+        get() = isButtonForViewingGamesPlayedEnabled_
 
     private val fragmentToDisplay__ : MutableLiveData<Fragments> = MutableLiveData(Fragments.FRAGMENT_CUBES)
     val fragmentToDisplay : LiveData<Fragments>
@@ -33,19 +37,40 @@ class MainAcitivtyViewModel : ViewModel() {
     val totalPointsText : LiveData<String>
         get() = totalPointsText_
 
+    private val fragmentToDisplayWithViewPastGamesButton_ : MutableLiveData<Fragments> = MutableLiveData(Fragments.FRAGMENT_CUBES)
+    val fragmentToDisplayWithViewPastGamesButton : LiveData<Fragments>
+        get() = fragmentToDisplayWithViewPastGamesButton_
 
+
+
+
+    fun changeButtonForViewingGamesPlayedState(state : Boolean){
+        isButtonForViewingGamesPlayedEnabled_.value = state
+    }
 
     fun changeButtonForChangingFragmentsState(value : Boolean){
         Log.i("buttonFragments","viewModel -> ${value}")
 
-        isButtonEnabled_.value = value
+        isButtonForChangingFragmentsEnabled_.value = value
     }
 
-    fun changeFragments(){
+    fun changeFragmentsWithButtonForDisplayingYamb(){
         if(fragmentToDisplay__.value == Fragments.FRAGMENT_CUBES)
             fragmentToDisplay__.value = Fragments.FRAGMENT_YAMB
         else
             fragmentToDisplay__.value  = Fragments.FRAGMENT_CUBES
+    }
+
+    fun changeFragmentsWithButtonForPastGames(){
+        if(fragmentToDisplayWithViewPastGamesButton_.value == Fragments.FRAGMENT_CUBES){
+            Fragments.FRAGMENT_PAST_GAMES.buttonText = "BACK"
+            fragmentToDisplayWithViewPastGamesButton_.value = Fragments.FRAGMENT_PAST_GAMES
+        }
+        else{
+            Fragments.FRAGMENT_PAST_GAMES.buttonText = "PAST GAMES"
+            fragmentToDisplayWithViewPastGamesButton_.value  = Fragments.FRAGMENT_CUBES
+        }
+
     }
 
    fun changeDisplayFinishedScreenStatus(){
@@ -60,6 +85,7 @@ class MainAcitivtyViewModel : ViewModel() {
     fun changeTotalPoints(totalPoints : Int){
         this.totalPointsText_.value = totalPoints.toString()
     }
+
 
 
 }

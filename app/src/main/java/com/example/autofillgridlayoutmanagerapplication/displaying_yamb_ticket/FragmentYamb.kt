@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import com.example.autofillgridlayoutmanagerapplication.*
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.pop_up_dialog.PopUpWhenClickedDialog
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer.AutoFillGridLayoutManager
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer.RecyclerAdapter
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer.RecyclerAdapterForDisplayingYambGame
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.*
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.*
 
@@ -24,7 +24,7 @@ class FragmentYamb() : Fragment(), ViewModelStoreOwner , IGetDiceRolledToFragmen
 
     private lateinit var viewModel : FragmentYambViewModel
     private val popUpWhenClicked = PopUpWhenClickedDialog()
-    private lateinit var adapter : RecyclerAdapter
+    private var adapter : RecyclerAdapterForDisplayingYambGame? = null
     var onValueInsertedListener : ICubeDataReciver? = null
     var onGameFinishedListener: IFinishedGameListener? = null
 
@@ -36,7 +36,7 @@ class FragmentYamb() : Fragment(), ViewModelStoreOwner , IGetDiceRolledToFragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = RecyclerAdapter(requireContext().applicationContext, viewModel.itemsInRecycler.value!!,viewModel::changeIsPopUpDialogEnabledState)
+        adapter = adapter ?: RecyclerAdapterForDisplayingYambGame(requireContext().applicationContext, viewModel.itemsInRecycler.value!!,viewModel::changeIsPopUpDialogEnabledState)
 
         popUpWhenClicked.onPopUpOpenListener = this
         popUpWhenClicked.onButtonYesClickedListener = this
@@ -54,7 +54,7 @@ class FragmentYamb() : Fragment(), ViewModelStoreOwner , IGetDiceRolledToFragmen
         })
 
         viewModel.itemsInRecycler.observe(viewLifecycleOwner, Observer {
-            adapter.notifyDataSetChanged()
+            adapter!!.changeYambGameForDisplay(it)
         })
 
         viewModel.aheadCall.observe(viewLifecycleOwner, Observer {
@@ -95,11 +95,14 @@ class FragmentYamb() : Fragment(), ViewModelStoreOwner , IGetDiceRolledToFragmen
     override fun onDetach() {
         viewModel.unFreezeAllItems()
         viewModel.changeButtonForChangingFragmentsState()
+        onValueInsertedListener!!.changeViewPastGamesButtonState(true)
         super.onDetach()
     }
+
     override fun getDiceRolled(diceRolled : List<Int>) {
         viewModel.diceRolled = diceRolled
     }
+
     override fun getAheadCall(aheadCall: Boolean) {
         viewModel = ViewModelProvider(onValueInsertedListener as ViewModelStoreOwner).get(FragmentYambViewModel::class.java)
         viewModel.changeAheadCall(aheadCall)
@@ -110,7 +113,6 @@ class FragmentYamb() : Fragment(), ViewModelStoreOwner , IGetDiceRolledToFragmen
         viewModel.changeButtonForChangingFragmentsState()
     }
     override fun enableSendingDataToPopUp() {
-        Log.i("enableSending","fragment yamb")
         viewModel.enableSendingDataToPup()
     }
 
@@ -118,9 +120,14 @@ class FragmentYamb() : Fragment(), ViewModelStoreOwner , IGetDiceRolledToFragmen
         viewModel.changeIsGameFinishedState()
         viewModel.resetAllItems()
     }
+
     fun changeRecyclerEnabledState(){
         viewModel.changeIsRecyclerScrollingAndClickingEnabled()
 }
+
+    fun saveGame(){
+        viewModel.saveGame(requireContext())
+    }
 
 
 }

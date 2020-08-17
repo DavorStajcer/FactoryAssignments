@@ -2,6 +2,8 @@ package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket
 
 import android.util.Log
 import com.example.autofillgridlayoutmanagerapplication.R
+import com.example.autofillgridlayoutmanagerapplication.database.ColumnInYamb
+import com.example.autofillgridlayoutmanagerapplication.database.GameStatsWithCorrespondingColumns
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcer.ItemInRecycler
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.RowIndexOfResultElements
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.YambConstants
@@ -62,8 +64,8 @@ object ItemListAndStatsGenerator {
     }
     fun isGameFinished() : Boolean{
         var isFinished = true
-        for(member in currentItems){
-            if(member.data == null)
+        for((index,member) in currentItems.withIndex()){
+            if(member.data == null && index%6 != 5)
                 isFinished = false
         }
         return isFinished
@@ -72,7 +74,7 @@ object ItemListAndStatsGenerator {
         var totalPoints = 0
         for((index,member) in currentItems.withIndex()){
             if(index%YambConstants.COLUMN_NUMBER.value == 5)
-                totalPoints += member.data.toString().toInt()
+                totalPoints += (member.data ?: 0).toString().toInt()
         }
         return totalPoints
     }
@@ -223,15 +225,75 @@ object ItemListAndStatsGenerator {
 
     fun generateStartingTestItems() : List<ItemInRecycler>{
 
+        currentItems = mutableListOf<ItemInRecycler>()
+
         var i = 0
         var layoutId = 0
         var data: Any? = 0
         var clickable = false
         while (i < 96) {
-            if (i % 6 == 0) {
+
+            if(
+                i%6 == 5 && i/6 !=
+                RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index && i/6 !=
+                RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index && i/6 !=
+                RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_THREE.index
+            )
+                data = null
+            else{
+                if (i % 6 == 0) {
+                    layoutId = R.layout.grid_layout_element_image
+                    data = when (i / 6) {
+                        0 -> R.drawable.cube1
+                        1 -> R.drawable.cube2
+                        2 -> R.drawable.cube3
+                        3 -> R.drawable.cube4
+                        4 -> R.drawable.cube5
+                        5 -> R.drawable.cube6
+                        6 -> R.drawable.zbroj_od_jedan_do_deset
+                        7 -> R.drawable.max
+                        8 -> R.drawable.min
+                        9 -> R.drawable.max_min
+                        10 -> R.drawable.dva_para
+                        11 -> R.drawable.straight
+                        12 -> R.drawable.full
+                        13 -> R.drawable.poker
+                        14 -> R.drawable.yamb
+                        15 -> R.drawable.zbroj_od_dva_para_do_yamba
+                        else -> throw IllegalStateException("i out of bounds")
+                    }
+                }else {
+                    layoutId = R.layout.grid_layout_element_text_view
+                    if ((i / 6 == 0 || i/6 == 1) && i % 6 == 2) {
+                        data = null
+                        clickable = true
+                    }
+
+            }
+
+            }
+            currentItems.add(ItemInRecycler(layoutId = layoutId, data = data, clickable = clickable))
+            data = 0
+            clickable = false
+            i++
+
+        }
+        return currentItems
+    }
+
+    fun getListFromColumnsInDatabase(list : List<ColumnInYamb>) : List<ItemInRecycler>{
+
+        val tempList = mutableListOf<ItemInRecycler>()
+        var i = 0
+        var layoutId = 0
+        var data : Any? = null
+        val clickable = false
+
+        while(i<96){
+            if(i%6 == 0){
                 layoutId = R.layout.grid_layout_element_image
-                data = when (i / 6) {
-                    0 -> R.drawable.cube1
+                data = when(i/6){
+                    0 ->  R.drawable.cube1
                     1 -> R.drawable.cube2
                     2 -> R.drawable.cube3
                     3 -> R.drawable.cube4
@@ -249,29 +311,104 @@ object ItemListAndStatsGenerator {
                     15 -> R.drawable.zbroj_od_dva_para_do_yamba
                     else -> throw IllegalStateException("i out of bounds")
                 }
-            } else {
+            }else{
                 layoutId = R.layout.grid_layout_element_text_view
-                if (i / 6 == 0 && i % 6 == 2) {
-                    data = null
-                    clickable = true
+                data = when(i/6){
+                    0 ->  list[i%6 -1].one
+                    1 -> list[i%6-1].two
+                    2 -> list[i%6-1].three
+                    3 -> list[i%6-1].four
+                    4 -> list[i%6-1].five
+                    5 -> list[i%6-1].six
+                    6 -> list[i%6-1].sum_form_one_to_six
+                    7 -> list[i%6-1].max
+                    8 ->list[i%6-1].min
+                    9 -> list[i%6-1].max_min
+                    10 -> list[i%6-1].two_pairs
+                    11 -> list[i%6-1].straight
+                    12 ->list[i%6-1].full
+                    13 -> list[i%6-1].poker
+                    14 -> list[i%6-1].yamb
+                    15 -> list[i%6-1].sum_from_two_pairs_to_yamb
+                    else -> throw IllegalStateException("i out of bounds")
                 }
             }
-            currentItems.add(ItemInRecycler(layoutId = layoutId, data = data, clickable = clickable))
-            data = 0
-            clickable = false
+            tempList.add(ItemInRecycler(layoutId = layoutId,data = data,clickable = clickable))
             i++
-
         }
-        return currentItems
-    } //ostaje mi samo jos jedan item za klikunt, da vidim je li funkcionira zavrsavanje igre kako treba
+        return tempList
+    }
 
+    fun getMapOfRows()  :Map<Int,List<Int?>>{
 
+        val columnOne = mutableListOf<Int?>()
+        val columnTwo = mutableListOf<Int?>()
+        val columnThree = mutableListOf<Int?>()
+        val columnFour = mutableListOf<Int?>()
+        val columnFive = mutableListOf<Int?>()
 
+        var data : Int? = 0
 
+        for((index,member) in currentItems.withIndex()){
 
+            data = if(member.data == null)
+                null
+            else
+                member.data.toString().toInt()
 
+            if(index % 6 == 1)
+                columnOne.add(data)
+            if(index % 6 == 2 )
+                columnTwo.add(data)
+            if(index % 6 == 3 )
+                columnThree.add(data)
+            if(index % 6 == 4)
+                columnFour.add(data)
+            if(index % 6 == 5)
+                columnFive.add(data)
+          /*  if(index / 6 == 4 && index %6 != 0)
+                rowOfFives.add(data)
+            if(index / 6 == 5 && index %6 != 0)
+                rowOfSixes.add(data)
+            if(index / 6 == 6 && index %6 != 0)
+                rowOfSumFromOneToSix.add(data)
+            if(index / 6 == 7 && index %6 != 0)
+                rowOfMax.add(data)
+            if(index / 6 == 8 && index %6 != 0)
+                rowOfMin.add(data)
+            if(index / 6 == 9 && index %6 != 0 )
+                rowOfMaxMin.add(data)
+            if(index / 6 == 10 && index %6 != 0)
+                rowOfTwoPairs.add(data)
+            if(index / 6 == 11 && index %6 != 0)
+                rowOfStragiht.add(data)
+            if(index / 6 ==12 && index %6 != 0 )
+                rowOfFull.add(data)
+            if(index / 6 == 13 && index %6 != 0)
+                rowOfPoker.add(data)
+            if(index / 6 == 14 && index %6 != 0 )
+                rowOfYamb.add(data)
+            if(index / 6 == 15 && index %6 != 0 )
+                rowOfSumbFromTwoPairsToYamb.add(data)*/
+        }
 
-
-
-
+        return mapOf<Int,List<Int?>>(
+            0 to columnOne,
+            1 to columnTwo,
+            2 to columnThree,
+            3 to columnFour,
+            4 to columnFive
+/*            5 to rowOfSixes,
+            6 to rowOfSumFromOneToSix,
+            7 to rowOfMax,
+            8 to rowOfMin,
+            9 to rowOfMaxMin,
+            10 to rowOfTwoPairs,
+            11 to rowOfStragiht,
+            12 to rowOfFull,
+            13 to rowOfPoker,
+            14 to rowOfYamb,
+            15 to rowOfSumbFromTwoPairsToYamb*/
+            )
+    }
 }

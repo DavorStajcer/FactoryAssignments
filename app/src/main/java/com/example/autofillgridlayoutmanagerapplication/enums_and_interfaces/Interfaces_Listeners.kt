@@ -5,6 +5,7 @@ interface ICubeDataReciver{
     fun setButtonForChangingFragments(value : Boolean)
     fun setDiceRolledInYamb(diceRolled : List<Int>)
     fun setAheadCallInYamb(aheadCall : Boolean)
+    fun changeViewPastGamesButtonState(state : Boolean)
 }
 
 interface IFinishedGameListener{
