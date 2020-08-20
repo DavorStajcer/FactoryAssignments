@@ -1,32 +1,24 @@
 package com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces
 
-
-interface ICubeDataReciver{
-    fun setButtonForChangingFragments(value : Boolean)
-    fun setDiceRolledInYamb(diceRolled : List<Int>)
-    fun setAheadCallInYamb(aheadCall : Boolean)
-    fun changeViewPastGamesButtonState(state : Boolean)
+interface IOnGameClickedListener {
+    fun showClickedGame(gameId : Long)
 }
-
-interface IFinishedGameListener{
-    fun changeResultScreenState()
-    fun changeTotalPointsState(totalPoints : Int)
+interface ISendTotalPoints{
+    fun sendTotalPoints()
 }
-
+interface IOnItemInRecyclerClickedListener{
+    fun activatePopUpWhenItemClicked(positionOfItemClicked: Int)
+}
 interface ISetLastItemClickedInPopUpDialog {
-    fun setPopUpDialogText(positionOfItemClicked: Int,diceRolled : List<Int>)
+    fun setPopUpDialogText(positionOfItemClicked: Int)
 }
-
-interface IGetDiceRolledToFragmentYamb{
-    fun getDiceRolled(diceRolled : List<Int>)
-    fun getAheadCall(aheadCall : Boolean)
-}
-
 interface IGetPickedItemData{
-    fun getPickedItemData(valueOfItemPicked : Int)
+    fun getPickedItemDataFromPopUpForInsertingValues(valueOfItemPicked : Int)
 }
-
-
 interface IDisplayPopUpListener{
-    fun enableSendingDataToPopUp()
+    fun enableSendingDataToPopUpForInsertingValues()
+}
+interface ISaveOrContinueListener{
+    fun saveGame()
+    fun resetItems()
 }

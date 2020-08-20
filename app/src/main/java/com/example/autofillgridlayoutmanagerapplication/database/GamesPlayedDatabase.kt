@@ -5,13 +5,20 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.autofillgridlayoutmanagerapplication.database.Daos.ColumnInYambDao
+import com.example.autofillgridlayoutmanagerapplication.database.Daos.DataAboutRolledCubesDao
+import com.example.autofillgridlayoutmanagerapplication.database.Daos.GameStatsDao
+import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.ColumnInYamb
+import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.DataAboutRolledCubes
+import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.GameStat
 
-@Database(entities = [GameStat::class, ColumnInYamb::class], version = 21,exportSchema = true)
+@Database(entities = [GameStat::class, ColumnInYamb::class, DataAboutRolledCubes::class], version = 26,exportSchema = true)
 abstract class GamesPlayedDatabase : RoomDatabase() {
 
 
    abstract fun getGameStatsDao(): GameStatsDao
    abstract fun getColumnDao(): ColumnInYambDao
+   abstract fun getDataAboutRolledCubesDao(): DataAboutRolledCubesDao
 
     companion object{
 

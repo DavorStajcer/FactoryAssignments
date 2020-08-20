@@ -1,91 +1,45 @@
 package com.example.autofillgridlayoutmanagerapplication.changing_fragments
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.content.Context
 import androidx.lifecycle.ViewModel
-import io.reactivex.Observable
+import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.Cubes
+import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.DataAboutRolledCubes
+import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
-enum class Fragments(var buttonText : String){
-    FRAGMENT_CUBES("YAMB"),FRAGMENT_YAMB("CUBES"),FRAGMENT_PAST_GAMES("PAST GAMES")
-}
+class MainAcitivtyViewModel() : ViewModel() {
 
-enum class FinishedScreen{
-    DISPLAY,DONT_DISPLAY
-}
+    var context : Context? = null
+    private var disposable : Disposable? = null
 
+    fun initializeDataAboutRolledCubes(){
 
-class MainAcitivtyViewModel : ViewModel() {
+            val cubes =
+                Cubes(
+                    cubeOne = 1,
+                    cubeTwo = 1,
+                    cubeThree = 1,
+                    cubeFour = 1,
+                    cubeFive = 1,
+                    cubeSix = 1
+                )
 
-    private val isButtonForChangingFragmentsEnabled_ = MutableLiveData<Boolean>(false)
-    val isButtonForChangingFragmentsEnabled : LiveData<Boolean>
-        get() = isButtonForChangingFragmentsEnabled_
-
-    private val isButtonForViewingGamesPlayedEnabled_ = MutableLiveData<Boolean>(true)
-    val isButtonForViewingGamesPlayedEnabled : LiveData<Boolean>
-        get() = isButtonForViewingGamesPlayedEnabled_
-
-    private val fragmentToDisplay__ : MutableLiveData<Fragments> = MutableLiveData(Fragments.FRAGMENT_CUBES)
-    val fragmentToDisplay : LiveData<Fragments>
-        get() = fragmentToDisplay__
-
-    private val displayFinishScreen_ : MutableLiveData<FinishedScreen> = MutableLiveData(FinishedScreen.DONT_DISPLAY)
-    val displayFinishScreen : LiveData<FinishedScreen>
-        get() = displayFinishScreen_
-
-    private val totalPointsText_ : MutableLiveData<String> = MutableLiveData()
-    val totalPointsText : LiveData<String>
-        get() = totalPointsText_
-
-    private val fragmentToDisplayWithViewPastGamesButton_ : MutableLiveData<Fragments> = MutableLiveData(Fragments.FRAGMENT_CUBES)
-    val fragmentToDisplayWithViewPastGamesButton : LiveData<Fragments>
-        get() = fragmentToDisplayWithViewPastGamesButton_
-
-
-
-
-    fun changeButtonForViewingGamesPlayedState(state : Boolean){
-        isButtonForViewingGamesPlayedEnabled_.value = state
-    }
-
-    fun changeButtonForChangingFragmentsState(value : Boolean){
-        Log.i("buttonFragments","viewModel -> ${value}")
-
-        isButtonForChangingFragmentsEnabled_.value = value
-    }
-
-    fun changeFragmentsWithButtonForDisplayingYamb(){
-        if(fragmentToDisplay__.value == Fragments.FRAGMENT_CUBES)
-            fragmentToDisplay__.value = Fragments.FRAGMENT_YAMB
-        else
-            fragmentToDisplay__.value  = Fragments.FRAGMENT_CUBES
-    }
-
-    fun changeFragmentsWithButtonForPastGames(){
-        if(fragmentToDisplayWithViewPastGamesButton_.value == Fragments.FRAGMENT_CUBES){
-            Fragments.FRAGMENT_PAST_GAMES.buttonText = "BACK"
-            fragmentToDisplayWithViewPastGamesButton_.value = Fragments.FRAGMENT_PAST_GAMES
-        }
-        else{
-            Fragments.FRAGMENT_PAST_GAMES.buttonText = "PAST GAMES"
-            fragmentToDisplayWithViewPastGamesButton_.value  = Fragments.FRAGMENT_CUBES
-        }
+        disposable = Completable.fromAction {
+            GamesPlayedDatabase.getInstanceOfDatabase(context!!).getDataAboutRolledCubesDao().insertData(
+                DataAboutRolledCubes(
+                    1,
+                    cubes,
+                    aheadCall = false,
+                    isRecyclerFrozen = true,
+                    enableButtonForRollingDices = true
+                )
+            )
+        }.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
 
     }
-
-   fun changeDisplayFinishedScreenStatus(){
-           if(displayFinishScreen_.value == FinishedScreen.DISPLAY)
-                displayFinishScreen_.value = FinishedScreen.DONT_DISPLAY
-           else{
-               displayFinishScreen_.value = FinishedScreen.DISPLAY
-           }
-
-   }
-
-    fun changeTotalPoints(totalPoints : Int){
-        this.totalPointsText_.value = totalPoints.toString()
-    }
-
-
-
 }
