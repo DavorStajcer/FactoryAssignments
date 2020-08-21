@@ -9,17 +9,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.RecyclerAndFloatinActionButton
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.ViewModelFactory
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.AutoFillGridLayoutManager
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.RecyclerAdapterForDisplayingYambGame
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.Adapters
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.FloatingActionButtton
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IOnGameClickedListener
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.ScreenValues
 import kotlinx.android.synthetic.main.fragment_saved_games.*
 
 
 
-class PastGamesFragment  : Fragment() , IOnGameClickedListener {
+class FragmentSavedGames  : Fragment() , IOnGameClickedListener {
 
     private lateinit var viewModelSavedGames : ViewModelSavedGames
     private lateinit var adapterGameStats : RecyclerAdapterDisplayingSavedGames
@@ -64,7 +65,7 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
         })
 
         viewModelSavedGames.floatingActionButton.observe(viewLifecycleOwner,Observer{
-            if(it == RecyclerAndFloatinActionButton.ENABLED){
+            if(it == FloatingActionButtton.ENABLED){
                 floatingActionButton_BackToListOfGames.visibility = View.VISIBLE
                 setClickListenerForFloatingButton()
             }
@@ -82,7 +83,7 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
                     recyclerPastGamesList.adapter = adapterGameStats
                     autoFillGridLayoutManager.columnWidth = 1080
                     autoFillGridLayoutManager.columnWidthChanged = true
-                    viewModelSavedGames.changeFloatingActionButtonState(RecyclerAndFloatinActionButton.DISABLED)
+                    viewModelSavedGames.changeFloatingActionButtonState(FloatingActionButtton.DISABLED)
                     viewModelSavedGames.changeTextAboveRecycler()
                 }
                 Adapters.YAMB_GAME -> {
@@ -90,7 +91,7 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
                     autoFillGridLayoutManager.columnWidth = ScreenValues.DEVICE_WIDTH.size / ScreenValues.COLUMN_NUMBER.size
                     autoFillGridLayoutManager.columnWidthChanged = true
 
-                    viewModelSavedGames.changeFloatingActionButtonState(RecyclerAndFloatinActionButton.ENABLED)
+                    viewModelSavedGames.changeFloatingActionButtonState(FloatingActionButtton.ENABLED)
                     viewModelSavedGames.changeTextAboveRecycler()
                 }
             }

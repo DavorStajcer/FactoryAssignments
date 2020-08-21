@@ -7,17 +7,16 @@ import androidx.lifecycle.ViewModel
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.GameStat
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.ItemListAndStatsGenerator
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.RecyclerAndFloatinActionButton
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInRecycler
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.Adapters
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.FloatingActionButtton
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IHasObservers
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IViewModelForDisplayingYambTicket
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-enum class Adapters(){
-    GAME_STATS(),YAMB_GAME()
-}
+
 
 class ViewModelSavedGames(val database: GamesPlayedDatabase) : ViewModel(), IViewModelForDisplayingYambTicket, IHasObservers {
 
@@ -37,8 +36,8 @@ class ViewModelSavedGames(val database: GamesPlayedDatabase) : ViewModel(), IVie
     val currentAdapter : LiveData<Adapters>
         get() = currentAdapter_
 
-    private val floatingActionButton_ : MutableLiveData<RecyclerAndFloatinActionButton> = MutableLiveData(RecyclerAndFloatinActionButton.DISABLED)
-    val floatingActionButton : LiveData<RecyclerAndFloatinActionButton>
+    private val floatingActionButton_ : MutableLiveData<FloatingActionButtton> = MutableLiveData(FloatingActionButtton.DISABLED)
+    val floatingActionButton : LiveData<FloatingActionButtton>
         get() = floatingActionButton_
 
     private val isDatabaseEmpty_ : MutableLiveData<Boolean> = MutableLiveData(true)
@@ -77,7 +76,7 @@ class ViewModelSavedGames(val database: GamesPlayedDatabase) : ViewModel(), IVie
         else
            currentAdapter_.value = Adapters.GAME_STATS
     }
-    fun changeFloatingActionButtonState(state : RecyclerAndFloatinActionButton){
+    fun changeFloatingActionButtonState(state : FloatingActionButtton){
             floatingActionButton_.value = state
     }
     fun changeTextAboveRecycler() {

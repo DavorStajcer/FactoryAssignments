@@ -19,14 +19,6 @@ import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.*
 
-enum class RecyclerAndFloatinActionButton{
-    ENABLED,DISABLED
-}
-enum class Fragments(var buttonText : String){
-    FRAGMENT_CUBES("YAMB"),FRAGMENT_YAMB("CUBES"),FRAGMENT_PAST_GAMES("PAST GAMES")
-}
-
-
 
 
 class ViewModelFragmentYambTicket(val database  :GamesPlayedDatabase) : ViewModel() , IViewModelForDisplayingYambTicket, IHasObservers {

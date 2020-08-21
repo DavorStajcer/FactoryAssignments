@@ -18,9 +18,7 @@ import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.*
 
 import kotlinx.android.synthetic.main.fragment_yamb_layout.*
 
-enum class RowIndexOfResultElements(val index : Int){
-    INDEX_OF_RESULT_ROW_ELEMENT_ONE(6),INDEX_OF_RESULT_ROW_ELEMENT_TWO(9),INDEX_OF_RESULT_ROW_ELEMENT_THREE(15)
-}
+
 
 class FragmentYambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListener, ISaveOrContinueListener,ISendTotalPoints{
 
