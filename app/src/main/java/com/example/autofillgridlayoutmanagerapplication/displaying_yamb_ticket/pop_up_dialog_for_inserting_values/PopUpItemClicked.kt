@@ -54,7 +54,7 @@ class PopUpItemClicked() : BottomSheetDialogFragment(), ISetLastItemClickedInPop
 
     }
 
-    override fun setPopUpDialogText(positionOfItemClicked: Int) {
+    override fun setPopUpDialogTextForGivenPosition(positionOfItemClicked: Int) {
         viewModel!!.setTextForDisplay(positionOfItemClicked)
     }
 

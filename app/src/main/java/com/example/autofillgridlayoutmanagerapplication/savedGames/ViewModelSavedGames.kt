@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.GameStat
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.Adapters
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.ItemListAndStatsGenerator
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.RecyclerAndFloatinActionButton
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInRecycler
@@ -15,6 +14,10 @@ import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IVi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+
+enum class Adapters(){
+    GAME_STATS(),YAMB_GAME()
+}
 
 class ViewModelSavedGames(val database: GamesPlayedDatabase) : ViewModel(), IViewModelForDisplayingYambTicket, IHasObservers {
 

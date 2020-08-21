@@ -19,23 +19,8 @@ import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.*
 
-enum class PopUpState(){
-    SHOW,HIDE
-}
-enum class FinishGameState(){
-    FINISHED,NOT_FINISHED
-}
-enum class SendingDataToPopUp(var diceRolled : List<Int>,var position: Int){
-    ENABLED(listOf(),0),DISABLED(listOf(),0)
-}
-enum class SendingDataToFinishedGamePopUp(var totalPoints : Int){
-    ENABLED(0),DISABLED(0)
-}
 enum class RecyclerAndFloatinActionButton{
     ENABLED,DISABLED
-}
-enum class Adapters(){
-    GAME_STATS(),YAMB_GAME()
 }
 enum class Fragments(var buttonText : String){
     FRAGMENT_CUBES("YAMB"),FRAGMENT_YAMB("CUBES"),FRAGMENT_PAST_GAMES("PAST GAMES")
@@ -47,15 +32,15 @@ enum class Fragments(var buttonText : String){
 class ViewModelFragmentYambTicket(val database  :GamesPlayedDatabase) : ViewModel() , IViewModelForDisplayingYambTicket, IHasObservers {
 
     var diceRolled = listOf<Int>()
-    var onClickItemPosition = 0
+
 
     private val aheadCall_ : MutableLiveData<Boolean> = MutableLiveData()
     val aheadCall : LiveData<Boolean>
         get() = aheadCall_
 
-    private val  isPopUpEnabled_ : MutableLiveData<PopUpState> = MutableLiveData(PopUpState.HIDE)
-    val isPopUpForEnteringValuesEnabled : LiveData<PopUpState>
-        get()= isPopUpEnabled_
+    private val  isPopUpForEnteringValuesEnabled_ : MutableLiveData<Boolean> = MutableLiveData(false)
+    val isPopUpForEnteringValuesEnabled : LiveData<Boolean>
+        get()= isPopUpForEnteringValuesEnabled_
 
     private val  areDicesRolledTwice_ : MutableLiveData<Boolean> = MutableLiveData()
     val areDicesRolledTwice : LiveData<Boolean>
@@ -65,25 +50,33 @@ class ViewModelFragmentYambTicket(val database  :GamesPlayedDatabase) : ViewMode
     val itemsInRecycler : LiveData<List<ItemInRecycler>>
         get() = itemsInRecycler_
 
-    private val sendDataToPopUpForInsertingValues_ : MutableLiveData<SendingDataToPopUp> = MutableLiveData()
-    val sendDataToPopUpForInsertingValues : LiveData<SendingDataToPopUp>
-        get() = sendDataToPopUpForInsertingValues_
+    private val isSendingPositionOfItemClickedToPopUpEnabled_ : MutableLiveData<Boolean> = MutableLiveData(false)
+    val isSendingPositionOfItemClickedToPopUpEnabled : LiveData<Boolean>
+        get() = isSendingPositionOfItemClickedToPopUpEnabled_
 
-    private val sendDataToPopUpForFinishedGame_ : MutableLiveData<SendingDataToFinishedGamePopUp> = MutableLiveData()
-    val sendDataToPopUpForFinishedGame : LiveData<SendingDataToFinishedGamePopUp>
-        get() = sendDataToPopUpForFinishedGame_
+    private val isSendingTotalPointsToFinishedGamePopUpEnabled_: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isSendingTotalPointsToFinishedGamePopUpEnabled : LiveData<Boolean>
+        get() = isSendingTotalPointsToFinishedGamePopUpEnabled_
 
-    private val finishedGame_ = MutableLiveData<FinishGameState>(FinishGameState.NOT_FINISHED)
-    val  finishGameState : LiveData<FinishGameState>
+    private val finishedGame_ = MutableLiveData<Boolean>(false)
+    val  finishGameState : LiveData<Boolean>
         get() = finishedGame_
+
+    private val totalPoints_ = MutableLiveData<Int>()
+    val  totalPoints : LiveData<Int>
+        get() = totalPoints_
 
     private val showToastForGameSaved_ = MutableLiveData<Boolean>(false)
     val showToastForGameSaved : LiveData<Boolean>
         get() = showToastForGameSaved_
 
+    private val onClickItemPosition_ : MutableLiveData<Int> = MutableLiveData()
+    val onClickItemPosition : LiveData<Int>
+        get() = onClickItemPosition_
+
 
     private val compositeDisposable = CompositeDisposable()
-
+    private var positioOfLastItemClickedTemp = 0
 
     init {
         generateStartingItems()
@@ -147,7 +140,7 @@ class ViewModelFragmentYambTicket(val database  :GamesPlayedDatabase) : ViewMode
         this.itemsInRecycler_.value = ItemListAndStatsGenerator.getAheadCallPressedList()
     }
     fun changeItemsWhenPopUpForEnteringValuesCloses(valueOfItemPicked: Int){
-        this.itemsInRecycler_.value = ItemListAndStatsGenerator.getNewList(onClickItemPosition, valueOfItemPicked)
+        this.itemsInRecycler_.value = ItemListAndStatsGenerator.getNewList(onClickItemPosition.value!!, valueOfItemPicked)
         if(ItemListAndStatsGenerator.isGameFinished())
             changeIsGameFinishedState()
         enableButtonForRollingDicesAndFreezeRecycler()
@@ -155,22 +148,20 @@ class ViewModelFragmentYambTicket(val database  :GamesPlayedDatabase) : ViewMode
     fun unFreezeAllItems(){
         this.itemsInRecycler_.value = ItemListAndStatsGenerator.getUnfreezedList()
     }
-    fun enableSendingDataToPopUpForInsertingValues(){
-        SendingDataToPopUp.ENABLED.diceRolled = diceRolled
-        SendingDataToPopUp.ENABLED.position = onClickItemPosition
-        sendDataToPopUpForInsertingValues_.value = SendingDataToPopUp.ENABLED
-        sendDataToPopUpForInsertingValues_.value = SendingDataToPopUp.DISABLED
+    fun changeSendingPositionOfItemClickedToPopUpForEnteringValuesState(){
+        isSendingPositionOfItemClickedToPopUpEnabled_.value = !isSendingPositionOfItemClickedToPopUpEnabled_.value!!
     }
-    fun enableSendingTotalPointsToFinishedGamePopUp(){
-        sendDataToPopUpForFinishedGame_.value = SendingDataToFinishedGamePopUp.ENABLED
-        sendDataToPopUpForFinishedGame_.value = SendingDataToFinishedGamePopUp.DISABLED
+    fun changeSendingTotalPointsToFinishedGamePopUpState(){
+        isSendingTotalPointsToFinishedGamePopUpEnabled_.value = !isSendingTotalPointsToFinishedGamePopUpEnabled_.value!!
     }
     fun resetAllItems(){
         changeIsGameFinishedState()
         this.generateStartingItems()
         freezeAllItems()
     }
-
+    fun changePositionOfLastItemClicked(){
+        onClickItemPosition_.value = positioOfLastItemClickedTemp
+    }
     private fun showToastMessage(){
         this.showToastForGameSaved_.value = true
         this.showToastForGameSaved_.value = false
@@ -202,13 +193,11 @@ class ViewModelFragmentYambTicket(val database  :GamesPlayedDatabase) : ViewMode
         }
     }
     private fun changeIsGameFinishedState(){
-        if(finishedGame_.value == FinishGameState.FINISHED){
-            finishedGame_.value = FinishGameState.NOT_FINISHED
-        }
-        else{
-            SendingDataToFinishedGamePopUp.ENABLED.totalPoints = ItemListAndStatsGenerator.getTotalPoints()
-            finishedGame_.value = FinishGameState.FINISHED
-        }
+        finishedGame_.value =  !finishedGame_.value!!
+    }
+
+    fun changeTotalPoints(){
+        this.totalPoints_.value = ItemListAndStatsGenerator.getTotalPoints()
     }
     private fun enableButtonForRollingDicesAndFreezeRecycler(){
         compositeDisposable.add(
@@ -273,10 +262,12 @@ class ViewModelFragmentYambTicket(val database  :GamesPlayedDatabase) : ViewMode
         return tempDiceRolledList
     }
     override fun changeIsPopUpDialogEnabledState(position: Int,clickable : Boolean){
-        if(clickable)
-            this.onClickItemPosition = position
-        isPopUpEnabled_.value = PopUpState.SHOW
-        isPopUpEnabled_.value = PopUpState.HIDE
+        if(clickable){
+            positioOfLastItemClickedTemp = position
+            isPopUpForEnteringValuesEnabled_.value = true
+            isPopUpForEnteringValuesEnabled_.value = false
+        }
+
     }
     override fun disposeOfObservers(){
         compositeDisposable.dispose()

@@ -35,13 +35,9 @@ class RecyclerAdapterDisplayingSavedGames(
         val databindingLayout = SavedGamesReyclerElementBinding.inflate(LayoutInflater.from(context),parent,false)
         return PastGamesViewHolder(databindingLayout)
     }
-
     override fun getItemCount(): Int {
         return gamesToDisplay.count()
     }
-
-
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as PastGamesViewHolder).bind(position)
     }

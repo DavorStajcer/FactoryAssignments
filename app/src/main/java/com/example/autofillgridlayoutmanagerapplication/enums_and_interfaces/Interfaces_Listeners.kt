@@ -7,7 +7,7 @@ interface ISendTotalPoints{
     fun sendTotalPoints()
 }
 interface ISetLastItemClickedInPopUpDialog {
-    fun setPopUpDialogText(positionOfItemClicked: Int)
+    fun setPopUpDialogTextForGivenPosition(positionOfItemClicked: Int)
 }
 interface IGetPickedItemData{
     fun getPickedItemDataFromPopUpForInsertingValues(valueOfItemPicked : Int)

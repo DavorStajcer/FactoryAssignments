@@ -27,7 +27,7 @@ class FragmentYambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListene
     private lateinit var viewModel : ViewModelFragmentYambTicket
     private lateinit var popUpWhenClicked : PopUpItemClicked
     private lateinit var popUpFinishedGame : PopUpFinishedGame
-    private lateinit var adapter : RecyclerAdapterForDisplayingYambGame
+    private var adapter : RecyclerAdapterForDisplayingYambGame? = null
 
 
 
@@ -47,11 +47,24 @@ class FragmentYambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListene
         viewModel.setupObserverForDataAboutGame()
 
         viewModel.isPopUpForEnteringValuesEnabled.observe(viewLifecycleOwner, Observer {
-            if(it == PopUpState.SHOW)
+            if(it)
                 popUpWhenClicked.show(requireActivity().supportFragmentManager, "PopUp")
         })
+        viewModel.isSendingPositionOfItemClickedToPopUpEnabled.observe(viewLifecycleOwner, Observer {
+            if(it)
+                viewModel.changePositionOfLastItemClicked()
+        })
+        viewModel.onClickItemPosition.observe(viewLifecycleOwner, Observer {
+            popUpWhenClicked.setPopUpDialogTextForGivenPosition(it)
+            viewModel.changeSendingPositionOfItemClickedToPopUpForEnteringValuesState()
+        })
         viewModel.itemsInRecycler.observe(viewLifecycleOwner, Observer {
-            adapter.changeYambGameForDisplay(it)
+            if(adapter == null) {
+                adapter = RecyclerAdapterForDisplayingYambGame(requireContext().applicationContext, listOf())
+                recyclerView.adapter = adapter
+                adapter!!.viewModelReference = viewModel
+            }
+            adapter!!.changeYambGameForDisplay(it)
         })
         viewModel.aheadCall.observe(viewLifecycleOwner, Observer {
             if(it)
@@ -61,18 +74,19 @@ class FragmentYambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListene
             if(it)
                 viewModel.unFreezeAllItems()
         })
-        viewModel.sendDataToPopUpForInsertingValues.observe(viewLifecycleOwner, Observer {
-            if(it == SendingDataToPopUp.ENABLED)
-                popUpWhenClicked.setPopUpDialogText(viewModel.onClickItemPosition)
-        })
-        viewModel.sendDataToPopUpForFinishedGame.observe(viewLifecycleOwner, Observer {
-            if(it == SendingDataToFinishedGamePopUp.ENABLED)
-                popUpFinishedGame.getTotalPoints(it.totalPoints)
-        })
         viewModel.finishGameState.observe(viewLifecycleOwner, Observer {
-            if(it == FinishGameState.FINISHED)
+            if(it)
                 popUpFinishedGame.show(requireActivity().supportFragmentManager,"FINISHED GAME")
-    })
+        })
+        viewModel.isSendingTotalPointsToFinishedGamePopUpEnabled.observe(viewLifecycleOwner, Observer {
+            if(it)
+                viewModel.changeTotalPoints()
+        })
+        viewModel.totalPoints.observe(viewLifecycleOwner, Observer {
+            popUpFinishedGame.getTotalPoints(it)
+            viewModel.changeSendingTotalPointsToFinishedGamePopUpState()
+        })
+
         viewModel.showToastForGameSaved.observe(viewLifecycleOwner, Observer {
             if(it)
                 Toast.makeText(requireContext(),"Game saved.",Toast.LENGTH_SHORT).show()
@@ -84,7 +98,7 @@ class FragmentYambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListene
         viewModel.changeItemsWhenPopUpForEnteringValuesCloses(valueOfItemPicked)
     }
     override fun enableSendingDataToPopUpForInsertingValues() {
-        viewModel.enableSendingDataToPopUpForInsertingValues()
+        viewModel.changeSendingPositionOfItemClickedToPopUpForEnteringValuesState()
     }
     override fun saveGame(){
         viewModel.saveGame()
@@ -93,18 +107,14 @@ class FragmentYambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListene
         viewModel.resetAllItems()
     }
     override fun sendTotalPoints(){
-        viewModel.enableSendingTotalPointsToFinishedGamePopUp()
+        viewModel.changeSendingTotalPointsToFinishedGamePopUpState()
     }
 
     private fun initializePopUpsAndAdapter(){
 
-        adapter = RecyclerAdapterForDisplayingYambGame(requireContext().applicationContext, listOf())
         val layoutManager = AutoFillGridLayoutManager(requireContext().applicationContext, ScreenValues.DEVICE_WIDTH.size / ScreenValues.COLUMN_NUMBER.size)
-        recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
-        adapter.viewModelReference = viewModel
-        recyclerView.adapter = adapter
 
         popUpWhenClicked = PopUpItemClicked()
         popUpWhenClicked.database = GamesPlayedDatabase.getInstanceOfDatabase(requireContext())

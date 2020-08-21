@@ -9,14 +9,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.Adapters
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.RecyclerAndFloatinActionButton
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.ViewModelFactory
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.AutoFillGridLayoutManager
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.RecyclerAdapterForDisplayingYambGame
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IOnGameClickedListener
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.ScreenValues
-import kotlinx.android.synthetic.main.fragment_past_games.*
+import kotlinx.android.synthetic.main.fragment_saved_games.*
 
 
 
@@ -32,7 +31,7 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_past_games,container,false)
+        return inflater.inflate(R.layout.fragment_saved_games,container,false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
