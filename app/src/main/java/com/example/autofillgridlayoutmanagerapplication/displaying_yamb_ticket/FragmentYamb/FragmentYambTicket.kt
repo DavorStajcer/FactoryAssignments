@@ -43,7 +43,7 @@ class FragmentYambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListene
             ViewModelFactory(GamesPlayedDatabase.getInstanceOfDatabase(requireContext()))
         ).get(ViewModelFragmentYambTicket::class.java)
 
-        initializePopUpsAndAdapter()
+        setupPopUpDialogsAndLayoutManager()
         viewModel.setupObserverForDataAboutGame()
 
         viewModel.isPopUpForEnteringValuesEnabled.observe(viewLifecycleOwner, Observer {
@@ -86,7 +86,6 @@ class FragmentYambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListene
             popUpFinishedGame.getTotalPoints(it)
             viewModel.changeSendingTotalPointsToFinishedGamePopUpState()
         })
-
         viewModel.showToastForGameSaved.observe(viewLifecycleOwner, Observer {
             if(it)
                 Toast.makeText(requireContext(),"Game saved.",Toast.LENGTH_SHORT).show()
@@ -110,7 +109,7 @@ class FragmentYambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListene
         viewModel.changeSendingTotalPointsToFinishedGamePopUpState()
     }
 
-    private fun initializePopUpsAndAdapter(){
+    private fun setupPopUpDialogsAndLayoutManager(){
 
         val layoutManager = AutoFillGridLayoutManager(requireContext().applicationContext, ScreenValues.DEVICE_WIDTH.size / ScreenValues.COLUMN_NUMBER.size)
         recyclerView.layoutManager = layoutManager

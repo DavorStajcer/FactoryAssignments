@@ -120,7 +120,6 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
     }
 
     override fun onDestroyView() {
-      //  viewModelSavedGames.restartAdapters()
         viewModelSavedGames.disposeOfObservers()
         super.onDestroyView()
     }

@@ -39,6 +39,7 @@ class MainAcitivtyViewModel(val database: GamesPlayedDatabase) : ViewModel() , I
     .subscribe(){
 
     }
+
 }
 
     override fun disposeOfObservers(){

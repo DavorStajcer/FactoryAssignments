@@ -94,10 +94,6 @@ class ViewModelSavedGames(val database: GamesPlayedDatabase) : ViewModel(), IVie
                 )
         }
     }
-    fun restartAdapters(){
-        currentAdapter_.value = Adapters.GAME_STATS
-    }
-
     private fun changeListOfItemsForAdapter(gameId: Long){
         compositeDisposable.add(
             database.getGameStatsDao().getGameStatsWithCorrespondingColumns(gameId)
