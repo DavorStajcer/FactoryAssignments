@@ -8,9 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.autofillgridlayoutmanagerapplication.R
+import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.Adapters
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.RecyclerAndFloatinActionButton
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.ViewModelFactory
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.AutoFillGridLayoutManager
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.RecyclerAdapterForDisplayingYambGame
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IOnGameClickedListener
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.ScreenValues
 import kotlinx.android.synthetic.main.fragment_past_games.*
@@ -21,7 +24,7 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
 
     private var viewModelSavedGames : ViewModel_FragmentSavedGames? = null
     private var adapterGameStats : RecyclerAdapter_DisplayingAllSavedGames? = null
-    private var adapterYambTicketToDisplay : RecyclerAdapter_DisplayingClickedSaveGame? = null
+    private var adapterYambTicketToDisplay : RecyclerAdapterForDisplayingYambGame? = null
     private var autoFillGridLayoutManager :AutoFillGridLayoutManager? = null
 
 
@@ -38,16 +41,18 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModelSavedGames  = viewModelSavedGames ?: ViewModelProvider(this).get(ViewModel_FragmentSavedGames::class.java)
-        adapterGameStats = RecyclerAdapter_DisplayingAllSavedGames(requireContext(),listOf())
-        adapterGameStats!!.onClickListener = this
-        adapterYambTicketToDisplay = RecyclerAdapter_DisplayingClickedSaveGame(requireContext(),listOf())
-        autoFillGridLayoutManager = AutoFillGridLayoutManager(requireContext().applicationContext, ScreenValues.DEVICE_WIDTH.size / ScreenValues.COLUMN_NUMBER.size)
+        viewModelSavedGames  = viewModelSavedGames ?: ViewModelProvider(
+            this
+            ,ViewModelFactory(GamesPlayedDatabase.getInstanceOfDatabase(requireContext()))
+        ).get(ViewModel_FragmentSavedGames::class.java)
+        adapterGameStats = adapterGameStats ?: RecyclerAdapter_DisplayingAllSavedGames(requireContext(),listOf())
+        adapterGameStats?.onClickListener = this
+        adapterYambTicketToDisplay =  adapterYambTicketToDisplay ?: RecyclerAdapterForDisplayingYambGame(requireContext(), listOf())
+        adapterYambTicketToDisplay?.viewModelReference =  adapterYambTicketToDisplay?.viewModelReference ?: viewModelSavedGames
+        autoFillGridLayoutManager = autoFillGridLayoutManager ?: AutoFillGridLayoutManager(requireContext().applicationContext, ScreenValues.DEVICE_WIDTH.size / ScreenValues.COLUMN_NUMBER.size)
 
-
-        viewModelSavedGames!!.getGameStatsFromDatabase(requireContext())
+        viewModelSavedGames!!.getGameStatsFromDatabase()
         recyclerPastGamesList.layoutManager = autoFillGridLayoutManager
-
 
         viewModelSavedGames!!.listOfGames.observe(viewLifecycleOwner, Observer {
             adapterGameStats!!.changeListOfGameStatsForDisplay(it)

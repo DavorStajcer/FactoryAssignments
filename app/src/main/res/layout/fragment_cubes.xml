@@ -13,9 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-
-
         <ImageView
             android:id="@+id/ivCube1"
             android:layout_width="148dp"
@@ -94,7 +91,6 @@
             app:layout_constraintBottom_toTopOf="@id/btnRollDice"
             android:background="@drawable/btn_ahead_call_selector"
             />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

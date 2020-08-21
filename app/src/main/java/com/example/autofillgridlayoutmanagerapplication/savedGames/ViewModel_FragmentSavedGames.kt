@@ -11,11 +11,12 @@ import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.F
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.ItemListAndStatsGenerator
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.RecyclerAndFloatinActionButton
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.ItemInRecycler
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IViewModelForDisplayingYambTicket
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class ViewModel_FragmentSavedGames : ViewModel() {
+class ViewModel_FragmentSavedGames(val database: GamesPlayedDatabase) : ViewModel(), IViewModelForDisplayingYambTicket {
 
     private val listOfGames_ : MutableLiveData<List<GameStat>> = MutableLiveData()
     val listOfGames : LiveData<List<GameStat>>
@@ -43,16 +44,12 @@ class ViewModel_FragmentSavedGames : ViewModel() {
 
 
     private var compositeDisposable : CompositeDisposable = CompositeDisposable()
-    private var database : GamesPlayedDatabase? = null
     private var gameIdForChangingTextFromFragment : Long = 0
 
 
-    fun getGameStatsFromDatabase(context : Context){
-
-        database = GamesPlayedDatabase.getInstanceOfDatabase(context)
-
+    fun getGameStatsFromDatabase(){
         compositeDisposable.add(
-            database!!.getGameStatsDao().getAllGameStats()
+            database.getGameStatsDao().getAllGameStats()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(){
@@ -62,8 +59,6 @@ class ViewModel_FragmentSavedGames : ViewModel() {
                 }
                 else
                     this.isDatabaseEmpty_.value = true
-
-
             }
         )
 
@@ -83,12 +78,11 @@ class ViewModel_FragmentSavedGames : ViewModel() {
             floatingActionButton_.value = state
     }
     fun changeTextAboveRecycler() {
-
         if(currentAdapter.value == Adapters.GAME_STATS)
             textAboveRecycler_.value = "PAST GAMES"
         else{
                 compositeDisposable.add(
-                    database!!.getGameStatsDao().getGameStat(gameIdForChangingTextFromFragment)
+                    database.getGameStatsDao().getGameStat(gameIdForChangingTextFromFragment)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(){
@@ -103,7 +97,7 @@ class ViewModel_FragmentSavedGames : ViewModel() {
 
     private fun changeListOfItemsForAdapter(gameId: Long){
         compositeDisposable.add(
-            database!!.getGameStatsDao().getGameStatsWithCorrespondingColumns(gameId)
+            database.getGameStatsDao().getGameStatsWithCorrespondingColumns(gameId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -113,6 +107,10 @@ class ViewModel_FragmentSavedGames : ViewModel() {
                 }
         )
 
+    }
+
+    override fun changeIsPopUpDialogEnabledState(position: Int,clickable : Boolean) {
+        //do nothing when clicked
     }
 
 

@@ -20,9 +20,7 @@ object ItemListAndStatsGenerator {
         updateColumnRowAndPositionOfClickedItem(
             position
         )
-        updateClickedItem(
-            value
-        )
+        updateClickedItem(value)
         updateResultItems()
 
         return currentItems
@@ -94,7 +92,7 @@ object ItemListAndStatsGenerator {
         var clickable = false
         while(i<96){
             if(i%6 == 0){
-                layoutId = R.layout.grid_layout_element_image
+                layoutId = R.layout.image_element_recycler
                 data = when(i/6){
                     0 ->  R.drawable.cube1
                     1 -> R.drawable.cube2
@@ -115,7 +113,7 @@ object ItemListAndStatsGenerator {
                     else -> throw IllegalStateException("i out of bounds")
                 }
             }else{
-                layoutId = R.layout.grid_layout_element_text_view
+                layoutId = R.layout.text_element_recycler
                 if((i%6 == 1 && i/6 == 0) || (i%6 == 2 && i/6 == 14) || (i%6 == 3))
                     clickable = true
                 if(i/6 == 6 || i/6 == 9 || i/6 == 15)
@@ -151,7 +149,7 @@ object ItemListAndStatsGenerator {
                 data = null
             else{
                 if (i % 6 == 0) {
-                    layoutId = R.layout.grid_layout_element_image
+                    layoutId = R.layout.image_element_recycler
                     data = when (i / 6) {
                         0 -> R.drawable.cube1
                         1 -> R.drawable.cube2
@@ -172,7 +170,7 @@ object ItemListAndStatsGenerator {
                         else -> throw IllegalStateException("i out of bounds")
                     }
                 }else {
-                    layoutId = R.layout.grid_layout_element_text_view
+                    layoutId = R.layout.text_element_recycler
                     if ( i/6 == 1 && i % 6 == 2) {
                         data = null
                         clickable = true
@@ -203,7 +201,7 @@ object ItemListAndStatsGenerator {
 
         while(i<96){
             if(i%6 == 0){
-                layoutId = R.layout.grid_layout_element_image
+                layoutId = R.layout.image_element_recycler
                 data = when(i/6){
                     0 ->  R.drawable.cube1
                     1 -> R.drawable.cube2
@@ -224,7 +222,7 @@ object ItemListAndStatsGenerator {
                     else -> throw IllegalStateException("i out of bounds")
                 }
             }else{
-                layoutId = R.layout.grid_layout_element_text_view
+                layoutId = R.layout.text_element_recycler
                 data = when(i/6){
                     0 ->  list[i%6 -1].one
                     1 -> list[i%6-1].two
@@ -391,7 +389,7 @@ object ItemListAndStatsGenerator {
                 row == RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_THREE.index
     }
     private fun getNewItem(value : Int) : ItemInRecycler{
-        return ItemInRecycler(R.layout.grid_layout_element_text_view,data = value,clickable = false)
+        return ItemInRecycler(R.layout.text_element_recycler,data = value,clickable = false)
     }
 
 

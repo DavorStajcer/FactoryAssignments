@@ -5,7 +5,6 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.ItemInRecycler
-import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IOnItemInRecyclerClickedListener
 
 @BindingAdapter("imageSource")
     fun bindImageToImageView(imageView : ImageView, imageResource : Int){

@@ -6,9 +6,6 @@ interface IOnGameClickedListener {
 interface ISendTotalPoints{
     fun sendTotalPoints()
 }
-interface IOnItemInRecyclerClickedListener{
-    fun activatePopUpWhenItemClicked(positionOfItemClicked: Int)
-}
 interface ISetLastItemClickedInPopUpDialog {
     fun setPopUpDialogText(positionOfItemClicked: Int)
 }
@@ -21,4 +18,7 @@ interface IDisplayPopUpListener{
 interface ISaveOrContinueListener{
     fun saveGame()
     fun resetItems()
+}
+interface IViewModelForDisplayingYambTicket {
+    fun changeIsPopUpDialogEnabledState(position: Int,clickable : Boolean)
 }

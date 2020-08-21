@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:textSize="21sp"
-        android:text="PAST GAMES"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
@@ -25,7 +24,6 @@
         android:textSize="18sp"
         android:textColor="@color/colorPrimary"
         android:visibility="invisible"
-        android:text="YOU CURRENTLY HAVE NO GAMES SAVED"
         android:gravity="center" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -37,7 +35,7 @@
         android:src="@drawable/ic_baseline_undo_24"
         android:visibility="invisible"
         android:layout_marginBottom="30dp"
-        android:layout_marginLeft="30dp"/>
+        android:layout_marginStart="30dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerPastGamesList"

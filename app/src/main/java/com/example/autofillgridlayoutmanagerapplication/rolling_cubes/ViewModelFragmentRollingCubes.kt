@@ -67,6 +67,7 @@ class ViewModelFragmentRollingCubes : ViewModel() {
             buttonForAheadCallIsEnabled_.value = true
         }
         else{
+            setListeners_.value = !(setListeners.value ?: false)
             buttonForAheadCallIsEnabled_.value = false
             buttonForRollingCubesIsEnabled_.value = true
             buttonPressedCounter = 0

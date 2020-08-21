@@ -48,7 +48,10 @@ class FragmentRollingCubes() : Fragment(R.layout.fragment_cubes){
         viewModel!!.checkIsButtonForRollingCubesEnabled()
 
         viewModel!!.setListeners.observe(viewLifecycleOwner, Observer {
-            addListeners()
+            if(it)
+                addListeners()
+            else
+                removeListeners()
         })
 
         viewModel!!.databidingObject.observe(viewLifecycleOwner, Observer {
@@ -79,12 +82,16 @@ class FragmentRollingCubes() : Fragment(R.layout.fragment_cubes){
 
 
     private fun addListeners() { //ovako kad ih postavim, radi program
-
         for ((index, image) in imageViews!!.withIndex()) {
             image.setOnClickListener {
                 viewModel!!.changeCubePressedState(index)
 
             }
+        }
+    }
+    private fun removeListeners(){
+        for (image in imageViews!!) {
+            image.setOnClickListener(null)
         }
     }
 
