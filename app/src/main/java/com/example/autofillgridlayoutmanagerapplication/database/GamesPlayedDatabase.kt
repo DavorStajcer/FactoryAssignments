@@ -5,12 +5,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.autofillgridlayoutmanagerapplication.database.Daos.ColumnInYambDao
-import com.example.autofillgridlayoutmanagerapplication.database.Daos.DataAboutRolledCubesDao
-import com.example.autofillgridlayoutmanagerapplication.database.Daos.GameStatsDao
-import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.ColumnInYamb
-import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.DataAboutRolledCubes
-import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.GameStat
+import com.example.autofillgridlayoutmanagerapplication.database.daos.ColumnInYambDao
+import com.example.autofillgridlayoutmanagerapplication.database.daos.DataAboutRolledCubesDao
+import com.example.autofillgridlayoutmanagerapplication.database.daos.GameStatsDao
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.ColumnInYamb
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.DataAboutRolledCubes
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.GameStat
 
 @Database(entities = [GameStat::class, ColumnInYamb::class, DataAboutRolledCubes::class], version = 26,exportSchema = true)
 abstract class GamesPlayedDatabase : RoomDatabase() {

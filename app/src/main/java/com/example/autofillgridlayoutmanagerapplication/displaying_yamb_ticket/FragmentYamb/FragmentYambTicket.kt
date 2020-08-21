@@ -11,8 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.autofillgridlayoutmanagerapplication.*
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.pop_up_dialog_for_inserting_values.PopUpItemClicked
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.AutoFillGridLayoutManager
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.RecyclerAdapterForDisplayingYambGame
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.AutoFillGridLayoutManager
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.RecyclerAdapterForDisplayingYambGame
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.pop_up_dialog_for_finished_game.PopUpFinishedGame
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.*
 
@@ -22,9 +22,9 @@ enum class RowIndexOfResultElements(val index : Int){
     INDEX_OF_RESULT_ROW_ELEMENT_ONE(6),INDEX_OF_RESULT_ROW_ELEMENT_TWO(9),INDEX_OF_RESULT_ROW_ELEMENT_THREE(15)
 }
 
-class Fragment_YambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListener, ISaveOrContinueListener,ISendTotalPoints{
+class FragmentYambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListener, ISaveOrContinueListener,ISendTotalPoints{
 
-    private lateinit var viewModel : ViewModel_FragmentYambTicket
+    private lateinit var viewModel : ViewModelFragmentYambTicket
     private lateinit var popUpWhenClicked : PopUpItemClicked
     private lateinit var popUpFinishedGame : PopUpFinishedGame
     private lateinit var adapter : RecyclerAdapterForDisplayingYambGame
@@ -41,7 +41,7 @@ class Fragment_YambTicket() : Fragment(),IGetPickedItemData, IDisplayPopUpListen
         viewModel = ViewModelProvider(
             this,
             ViewModelFactory(GamesPlayedDatabase.getInstanceOfDatabase(requireContext()))
-        ).get(ViewModel_FragmentYambTicket::class.java)
+        ).get(ViewModelFragmentYambTicket::class.java)
 
         initializePopUpsAndAdapter()
         viewModel.setupObserverForDataAboutGame()

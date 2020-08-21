@@ -4,10 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.autofillgridlayoutmanagerapplication.R
-import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.Cubes
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.Cubes
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
 import com.example.autofillgridlayoutmanagerapplication.databinding.PopUpForInsertingValuesDataForBinding
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.RowIndexOfResultElements
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IHasObservers
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -18,7 +19,7 @@ enum class SendDataOfItemChosen(var positionOfItemChosen : Int, var valueForInpu
 }
 
 class PopUpWhenClickedDialogViewModel (
-)  : ViewModel(){
+)  : ViewModel(), IHasObservers{
 
     private val sendingDataOfItemChosen_ = MutableLiveData<SendDataOfItemChosen>()
     val sendingDataOfItemChosen : LiveData<SendDataOfItemChosen>
@@ -51,7 +52,6 @@ class PopUpWhenClickedDialogViewModel (
 
     fun setDiceRolleDatabaseObserver(database: GamesPlayedDatabase){
         compositeDisposable.add(
-
             database.getDataAboutRolledCubesDao().getData(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -59,7 +59,6 @@ class PopUpWhenClickedDialogViewModel (
                     this.diceRolled = generateDiceRolledWithDataFromDatabase(it.cubes)
                     changeShouldPopUpRecivePoistionOfPickedItem()
                 }
-
         )
     }
     fun setTextForDisplay(positionOfItemClickedInRecycler: Int) {
@@ -177,13 +176,9 @@ class PopUpWhenClickedDialogViewModel (
         return "Zelite li upisati $valueForInput na poziciji $positionOfItemClickedInRecycler ?"
         }
 
-
-
-
-
-
-
-
+    override fun disposeOfObservers() {
+        compositeDisposable.dispose()
+    }
 
 
 }

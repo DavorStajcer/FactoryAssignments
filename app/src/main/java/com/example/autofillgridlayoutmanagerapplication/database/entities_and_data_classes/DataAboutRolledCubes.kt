@@ -1,4 +1,4 @@
-package com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses
+package com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes
 
 import androidx.room.Embedded
 import androidx.room.Entity

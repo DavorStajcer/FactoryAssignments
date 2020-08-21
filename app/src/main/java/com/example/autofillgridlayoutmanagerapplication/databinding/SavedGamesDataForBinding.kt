@@ -1,6 +1,6 @@
 package com.example.autofillgridlayoutmanagerapplication.databinding
 
-class PastGamesDataForBinding (
+class SavedGamesDataForBinding (
     val date : String,
     val totalPoints : String
 )

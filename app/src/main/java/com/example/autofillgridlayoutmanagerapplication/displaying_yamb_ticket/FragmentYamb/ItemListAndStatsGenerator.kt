@@ -1,8 +1,8 @@
 package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb
 
 import com.example.autofillgridlayoutmanagerapplication.R
-import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.ColumnInYamb
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.ItemInRecycler
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.ColumnInYamb
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInRecycler
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.YambConstants
 import java.lang.IllegalStateException
 
@@ -130,7 +130,8 @@ object ItemListAndStatsGenerator {
 
         return currentItems
     }
-    fun generateStartingTestItems() : List<ItemInRecycler>{
+
+/*    fun generateStartingTestItems() : List<ItemInRecycler>{
 
         currentItems = mutableListOf<ItemInRecycler>()
 
@@ -190,13 +191,14 @@ object ItemListAndStatsGenerator {
 
         }
         return currentItems
-    }
-    fun getListFromColumnsInDatabase(list : List<ColumnInYamb>) : List<ItemInRecycler>{
+    }*/
+
+    fun generateListForRecyclerFromColumnsInDatabase(list : List<ColumnInYamb>) : List<ItemInRecycler>{
 
         val tempList = mutableListOf<ItemInRecycler>()
         var i = 0
-        var layoutId = 0
-        var data : Any? = null
+        var layoutId : Int
+        var data : Any?
         val clickable = false
 
         while(i<96){

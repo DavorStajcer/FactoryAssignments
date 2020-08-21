@@ -4,22 +4,22 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.GameStat
-import com.example.autofillgridlayoutmanagerapplication.databinding.PastGamesDataForBinding
-import com.example.autofillgridlayoutmanagerapplication.databinding.PastGamesReyclerElementBinding
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.GameStat
+import com.example.autofillgridlayoutmanagerapplication.databinding.SavedGamesDataForBinding
+import com.example.autofillgridlayoutmanagerapplication.databinding.SavedGamesReyclerElementBinding
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IOnGameClickedListener
 
-class RecyclerAdapter_DisplayingAllSavedGames(
+class RecyclerAdapterDisplayingSavedGames(
     private val context : Context,
     private var gamesToDisplay : List<GameStat>
 ) :  RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     var onClickListener : IOnGameClickedListener? = null
 
-    inner class PastGamesViewHolder(val databindingLayout : PastGamesReyclerElementBinding) : RecyclerView.ViewHolder(databindingLayout.root) {
+    inner class PastGamesViewHolder(val databindingLayout : SavedGamesReyclerElementBinding) : RecyclerView.ViewHolder(databindingLayout.root) {
 
         internal fun bind(position: Int){
-            databindingLayout.data = PastGamesDataForBinding(
+            databindingLayout.data = SavedGamesDataForBinding(
                 date = "Date: ${gamesToDisplay[position].date}",
                 totalPoints = "Points: ${gamesToDisplay[position].totalPoints}"
             )
@@ -32,7 +32,7 @@ class RecyclerAdapter_DisplayingAllSavedGames(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val databindingLayout = PastGamesReyclerElementBinding.inflate(LayoutInflater.from(context),parent,false)
+        val databindingLayout = SavedGamesReyclerElementBinding.inflate(LayoutInflater.from(context),parent,false)
         return PastGamesViewHolder(databindingLayout)
     }
 

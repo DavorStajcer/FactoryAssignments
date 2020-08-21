@@ -12,8 +12,8 @@ import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedData
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.Adapters
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.RecyclerAndFloatinActionButton
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.ViewModelFactory
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.AutoFillGridLayoutManager
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.RecyclerAdapterForDisplayingYambGame
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.AutoFillGridLayoutManager
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.RecyclerAdapterForDisplayingYambGame
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IOnGameClickedListener
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.ScreenValues
 import kotlinx.android.synthetic.main.fragment_past_games.*
@@ -22,12 +22,10 @@ import kotlinx.android.synthetic.main.fragment_past_games.*
 
 class PastGamesFragment  : Fragment() , IOnGameClickedListener {
 
-    private var viewModelSavedGames : ViewModel_FragmentSavedGames? = null
-    private var adapterGameStats : RecyclerAdapter_DisplayingAllSavedGames? = null
-    private var adapterYambTicketToDisplay : RecyclerAdapterForDisplayingYambGame? = null
-    private var autoFillGridLayoutManager :AutoFillGridLayoutManager? = null
-
-
+    private lateinit var viewModelSavedGames : ViewModelSavedGames
+    private lateinit var adapterGameStats : RecyclerAdapterDisplayingSavedGames
+    private lateinit var adapterYambTicketToDisplay : RecyclerAdapterForDisplayingYambGame
+    private lateinit var autoFillGridLayoutManager :AutoFillGridLayoutManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,36 +35,36 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
         return inflater.inflate(R.layout.fragment_past_games,container,false)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModelSavedGames  = viewModelSavedGames ?: ViewModelProvider(
+        viewModelSavedGames = ViewModelProvider(
             this
             ,ViewModelFactory(GamesPlayedDatabase.getInstanceOfDatabase(requireContext()))
-        ).get(ViewModel_FragmentSavedGames::class.java)
-        adapterGameStats = adapterGameStats ?: RecyclerAdapter_DisplayingAllSavedGames(requireContext(),listOf())
-        adapterGameStats?.onClickListener = this
-        adapterYambTicketToDisplay =  adapterYambTicketToDisplay ?: RecyclerAdapterForDisplayingYambGame(requireContext(), listOf())
-        adapterYambTicketToDisplay?.viewModelReference =  adapterYambTicketToDisplay?.viewModelReference ?: viewModelSavedGames
-        autoFillGridLayoutManager = autoFillGridLayoutManager ?: AutoFillGridLayoutManager(requireContext().applicationContext, ScreenValues.DEVICE_WIDTH.size / ScreenValues.COLUMN_NUMBER.size)
+        ).get(ViewModelSavedGames::class.java)
 
-        viewModelSavedGames!!.getGameStatsFromDatabase()
+        adapterGameStats = RecyclerAdapterDisplayingSavedGames(requireContext(),listOf())
+        adapterGameStats.onClickListener = this
+        adapterYambTicketToDisplay = RecyclerAdapterForDisplayingYambGame(requireContext(), listOf())
+        adapterYambTicketToDisplay.viewModelReference = viewModelSavedGames
+        autoFillGridLayoutManager = AutoFillGridLayoutManager(requireContext().applicationContext, ScreenValues.DEVICE_WIDTH.size / ScreenValues.COLUMN_NUMBER.size)
+
+        viewModelSavedGames.getGameStatsFromDatabase()
         recyclerPastGamesList.layoutManager = autoFillGridLayoutManager
 
-        viewModelSavedGames!!.listOfGames.observe(viewLifecycleOwner, Observer {
-            adapterGameStats!!.changeListOfGameStatsForDisplay(it)
+        viewModelSavedGames.listOfGames.observe(viewLifecycleOwner, Observer {
+            adapterGameStats.changeListOfGameStatsForDisplay(it)
         })
 
-        viewModelSavedGames!!.listOfItemsInRecyclerForDisplaying.observe(viewLifecycleOwner, Observer {
-            adapterYambTicketToDisplay!!.changeYambGameForDisplay(it)
+        viewModelSavedGames.listOfItemsInRecyclerForDisplaying.observe(viewLifecycleOwner, Observer {
+            adapterYambTicketToDisplay.changeYambGameForDisplay(it)
         })
 
-        viewModelSavedGames!!.textAboveRecycler.observe(viewLifecycleOwner, Observer {
+        viewModelSavedGames.textAboveRecycler.observe(viewLifecycleOwner, Observer {
             tvPastGamesTitle.text = it
         })
 
-        viewModelSavedGames!!.floatingActionButton.observe(viewLifecycleOwner,Observer{
+        viewModelSavedGames.floatingActionButton.observe(viewLifecycleOwner,Observer{
             if(it == RecyclerAndFloatinActionButton.ENABLED){
                 floatingActionButton_BackToListOfGames.visibility = View.VISIBLE
                 setClickListenerForFloatingButton()
@@ -78,29 +76,29 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
 
         })
 
-        viewModelSavedGames!!.currentAdapter.observe(viewLifecycleOwner, Observer {
+        viewModelSavedGames.currentAdapter.observe(viewLifecycleOwner, Observer {
 
              when(it!!){
                 Adapters.GAME_STATS ->{
                     recyclerPastGamesList.adapter = adapterGameStats
-                    autoFillGridLayoutManager!!.columnWidth = 1080
-                    autoFillGridLayoutManager!!.columnWidthChanged = true
-                    viewModelSavedGames!!.changeFloatingActionButtonState(RecyclerAndFloatinActionButton.DISABLED)
-                    viewModelSavedGames!!.changeTextAboveRecycler()
+                    autoFillGridLayoutManager.columnWidth = 1080
+                    autoFillGridLayoutManager.columnWidthChanged = true
+                    viewModelSavedGames.changeFloatingActionButtonState(RecyclerAndFloatinActionButton.DISABLED)
+                    viewModelSavedGames.changeTextAboveRecycler()
                 }
                 Adapters.YAMB_GAME -> {
                     recyclerPastGamesList.adapter = adapterYambTicketToDisplay
-                    autoFillGridLayoutManager!!.columnWidth = ScreenValues.DEVICE_WIDTH.size / ScreenValues.COLUMN_NUMBER.size
-                    autoFillGridLayoutManager!!.columnWidthChanged = true
+                    autoFillGridLayoutManager.columnWidth = ScreenValues.DEVICE_WIDTH.size / ScreenValues.COLUMN_NUMBER.size
+                    autoFillGridLayoutManager.columnWidthChanged = true
 
-                    viewModelSavedGames!!.changeFloatingActionButtonState(RecyclerAndFloatinActionButton.ENABLED)
-                    viewModelSavedGames!!.changeTextAboveRecycler()
+                    viewModelSavedGames.changeFloatingActionButtonState(RecyclerAndFloatinActionButton.ENABLED)
+                    viewModelSavedGames.changeTextAboveRecycler()
                 }
             }
 
         })
 
-        viewModelSavedGames!!.isDatabaseEmpty.observe(viewLifecycleOwner, Observer {
+        viewModelSavedGames.isDatabaseEmpty.observe(viewLifecycleOwner, Observer {
             showEmptyDatabaseNotification(it)
         })
 
@@ -108,7 +106,7 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
 
     private fun setClickListenerForFloatingButton(){
         floatingActionButton_BackToListOfGames.setOnClickListener {
-            viewModelSavedGames!!.changeAdapter()
+            viewModelSavedGames.changeAdapter()
         }
 
     }
@@ -123,12 +121,12 @@ class PastGamesFragment  : Fragment() , IOnGameClickedListener {
     }
 
     override fun onDestroyView() {
-        viewModelSavedGames!!.restartAdapters()
+      //  viewModelSavedGames.restartAdapters()
+        viewModelSavedGames.disposeOfObservers()
         super.onDestroyView()
     }
-
     override fun showClickedGame(gameId: Long) {
-        viewModelSavedGames!!.showClickedGame(gameId)
+        viewModelSavedGames.showClickedGame(gameId)
     }
 
 

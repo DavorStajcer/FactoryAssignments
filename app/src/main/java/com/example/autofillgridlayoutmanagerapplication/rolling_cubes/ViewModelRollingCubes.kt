@@ -5,10 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.autofillgridlayoutmanagerapplication.R
-import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.Cubes
-import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.DataAboutRolledCubes
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.Cubes
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.DataAboutRolledCubes
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
 import com.example.autofillgridlayoutmanagerapplication.databinding.FragmentCubesDataForBinding
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IHasObservers
 import com.example.bacanjekockica.Cube
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,7 +19,7 @@ import java.lang.IllegalStateException
 
 
 
-class ViewModelFragmentRollingCubes : ViewModel() {
+class ViewModelRollingCubes : ViewModel(), IHasObservers {
 
 
     private val setListeners_ = MutableLiveData<Boolean>()
@@ -149,6 +150,9 @@ class ViewModelFragmentRollingCubes : ViewModel() {
         return numbers
     }
 
+    override fun disposeOfObservers() {
+        compositeDisposable.dispose()
+    }
 
 
 }

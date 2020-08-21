@@ -1,22 +1,22 @@
 package com.example.autofillgridlayoutmanagerapplication.savedGames
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.autofillgridlayoutmanagerapplication.database.EntitiesAndDataCalsses.GameStat
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.GameStat
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.Adapters
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.ItemListAndStatsGenerator
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.FragmentYamb.RecyclerAndFloatinActionButton
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.ItemInRecycler
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInRecycler
+import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IHasObservers
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IViewModelForDisplayingYambTicket
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class ViewModel_FragmentSavedGames(val database: GamesPlayedDatabase) : ViewModel(), IViewModelForDisplayingYambTicket {
+class ViewModelSavedGames(val database: GamesPlayedDatabase) : ViewModel(), IViewModelForDisplayingYambTicket, IHasObservers {
 
     private val listOfGames_ : MutableLiveData<List<GameStat>> = MutableLiveData()
     val listOfGames : LiveData<List<GameStat>>
@@ -53,12 +53,12 @@ class ViewModel_FragmentSavedGames(val database: GamesPlayedDatabase) : ViewMode
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(){
-                if(!it.isNullOrEmpty()){
+                if(it.isNullOrEmpty())
+                    this.isDatabaseEmpty_.value = true
+                else{
                     this.isDatabaseEmpty_.value = false
                     this.listOfGames_.value = it
                 }
-                else
-                    this.isDatabaseEmpty_.value = true
             }
         )
 
@@ -101,7 +101,7 @@ class ViewModel_FragmentSavedGames(val database: GamesPlayedDatabase) : ViewMode
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    this.listOfItemsInRecyclerForDisplaying_.value = ItemListAndStatsGenerator.getListFromColumnsInDatabase(it.columns)
+                    this.listOfItemsInRecyclerForDisplaying_.value = ItemListAndStatsGenerator.generateListForRecyclerFromColumnsInDatabase(it.columns)
                 }){
                     Log.i("adapter","ERROR ----------------------> ${it.message}")
                 }
@@ -111,6 +111,10 @@ class ViewModel_FragmentSavedGames(val database: GamesPlayedDatabase) : ViewMode
 
     override fun changeIsPopUpDialogEnabledState(position: Int,clickable : Boolean) {
         //do nothing when clicked
+    }
+
+    override fun disposeOfObservers() {
+        compositeDisposable.dispose()
     }
 
 

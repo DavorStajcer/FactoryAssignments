@@ -22,3 +22,7 @@ interface ISaveOrContinueListener{
 interface IViewModelForDisplayingYambTicket {
     fun changeIsPopUpDialogEnabledState(position: Int,clickable : Boolean)
 }
+
+interface IHasObservers{
+    fun disposeOfObservers()
+}

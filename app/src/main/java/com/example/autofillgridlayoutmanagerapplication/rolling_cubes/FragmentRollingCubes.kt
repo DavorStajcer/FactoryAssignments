@@ -19,8 +19,8 @@ import kotlinx.android.synthetic.main.fragment_cubes.*
 class FragmentRollingCubes() : Fragment(R.layout.fragment_cubes){
 
 
-    private var viewModel : ViewModelFragmentRollingCubes? = null
-    private var imageViews : List<ImageView>? = null
+    private lateinit var viewModel : ViewModelRollingCubes
+    private lateinit var imageViews : List<ImageView>
     lateinit var fragmentCubesLayoutDatabinding : FragmentCubesBinding
 
 
@@ -32,70 +32,57 @@ class FragmentRollingCubes() : Fragment(R.layout.fragment_cubes){
         fragmentCubesLayoutDatabinding  = FragmentCubesBinding.inflate(inflater,container,false)
         return fragmentCubesLayoutDatabinding.root
     }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = viewModel ?: ViewModelProvider(requireActivity() as MainActivity).get(ViewModelFragmentRollingCubes::class.java)
-        viewModel!!.database = GamesPlayedDatabase.getInstanceOfDatabase(requireContext())
-        imageViews = imageViews ?: listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
+        viewModel = ViewModelProvider(requireActivity() as MainActivity).get(ViewModelRollingCubes::class.java)
+        viewModel.database = GamesPlayedDatabase.getInstanceOfDatabase(requireContext())
+        imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
+        fragmentCubesLayoutDatabinding.dataForBindingCubes = FragmentCubesDataForBinding()
 
-
-        fragmentCubesLayoutDatabinding.dataForBindingCubes =
-            FragmentCubesDataForBinding()
-
-        viewModel!!.checkIsButtonForRollingCubesEnabled()
-
-        viewModel!!.setListeners.observe(viewLifecycleOwner, Observer {
+        viewModel.checkIsButtonForRollingCubesEnabled()
+        viewModel.setListeners.observe(viewLifecycleOwner, Observer {
             if(it)
                 addListeners()
             else
                 removeListeners()
         })
-
-        viewModel!!.databidingObject.observe(viewLifecycleOwner, Observer {
+        viewModel.databidingObject.observe(viewLifecycleOwner, Observer {
             fragmentCubesLayoutDatabinding.dataForBindingCubes = it
         })
-
-        viewModel!!.buttonForAheadCallIsEnabled.observe(viewLifecycleOwner, Observer {
+        viewModel.buttonForAheadCallIsEnabled.observe(viewLifecycleOwner, Observer {
             btnAheadCall.isEnabled = it
         })
-
-        viewModel!!.buttonForRollingCubesIsEnabled.observe(viewLifecycleOwner, Observer<Boolean>{
+        viewModel.buttonForRollingCubesIsEnabled.observe(viewLifecycleOwner, Observer<Boolean>{
             btnRollDice.isEnabled = it
         })
 
-
         btnRollDice.setOnClickListener { _ ->
-            viewModel!!.rollDice()
+            viewModel.rollDice()
         }
-
         btnAheadCall.setOnClickListener { _ ->
-            viewModel!!.changeAheadCall()
+            viewModel.changeAheadCall()
             btnAheadCall.setBackgroundResource(R.drawable.btn_ahead_call_pressed)
         }
-
-
     }
 
-
-
     private fun addListeners() { //ovako kad ih postavim, radi program
-        for ((index, image) in imageViews!!.withIndex()) {
+        for ((index, image) in imageViews.withIndex()) {
             image.setOnClickListener {
-                viewModel!!.changeCubePressedState(index)
-
+                viewModel.changeCubePressedState(index)
             }
         }
     }
     private fun removeListeners(){
-        for (image in imageViews!!) {
+        for (image in imageViews) {
             image.setOnClickListener(null)
         }
     }
 
-
+    override fun onDestroyView() {
+        viewModel.disposeOfObservers()
+        super.onDestroyView()
+    }
 
 }
 

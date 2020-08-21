@@ -6,7 +6,7 @@
     <data>
         <variable
             name="itemInRecycler"
-            type="com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recylcerAdapterForDisplayingYambGame.ItemInRecycler" />
+            type="com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInRecycler" />
         <variable
             name="viewModel"
             type="com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IViewModelForDisplayingYambTicket"/>
