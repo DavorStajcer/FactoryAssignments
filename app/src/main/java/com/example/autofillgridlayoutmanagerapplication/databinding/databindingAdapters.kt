@@ -4,7 +4,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.autofillgridlayoutmanagerapplication.R
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInRecycler
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInGame
 
 @BindingAdapter("imageSource")
     fun bindImageToImageView(imageView : ImageView, imageResource : Int){
@@ -17,7 +17,7 @@ import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.r
     }
 
     @BindingAdapter("item")
-    fun bindTextToTextViewInRecycler(textView: TextView, item:ItemInRecycler){
+    fun bindTextToTextViewInRecycler(textView: TextView, item:ItemInGame){
         textView.text = null
         textView.background = null
         if (item.data != null) {

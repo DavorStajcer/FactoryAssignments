@@ -3,7 +3,7 @@
     <data>
         <variable
             name="data"
-            type="com.example.autofillgridlayoutmanagerapplication.databinding.SavedGamesDataForBinding" />
+            type="com.example.autofillgridlayoutmanagerapplication.databinding.DisplayingSavedGamesBindingData" />
           <variable
             name="gameId"
             type="Long" />

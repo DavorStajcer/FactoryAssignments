@@ -10,10 +10,10 @@ interface ISetLastItemClickedInPopUpDialog {
     fun setPopUpDialogTextForGivenPosition(positionOfItemClicked: Int)
 }
 interface IGetPickedItemData{
-    fun getPickedItemDataFromPopUpForInsertingValues(valueOfItemPicked : Int)
+    fun getValueInsertedInClickedItem(valueOfItemPicked : Int)
 }
 interface IDisplayPopUpListener{
-    fun enableSendingDataToPopUpForInsertingValues()
+    fun sendPositionOfItemClickedToPopUpDialog()
 }
 interface ISaveOrContinueListener{
     fun saveGame()

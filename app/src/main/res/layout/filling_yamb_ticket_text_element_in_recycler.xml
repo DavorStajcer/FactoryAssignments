@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="itemInRecycler"
+            type="com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInGame" />
+        <variable
+            name="view_model"
+            type="com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IViewModelForDisplayingYambTicket"/>
+        <variable
+            name="position_of_item_clicked"
+            type="Integer"/>
+       <variable
+            name="clickable"
+            type="Boolean"/>
+
+    </data>
+
+
+        <TextView
+            android:id="@+id/tvGridElement"
+            android:layout_width="60dp"
+            android:layout_height="42dp"
+            android:gravity="center"
+            app:item="@{itemInRecycler}"
+            android:onClick="@{() -> view_model.changeIsPopUpDialogEnabledState(position_of_item_clicked,clickable)}"
+            />
+
+
+</layout>

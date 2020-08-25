@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="itemInRecycler"
+            type="com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInGame" />
+    </data>
+
+        <ImageView
+        android:id="@+id/ivGridElement"
+        android:layout_width="60dp"
+        android:layout_height="42dp"
+        app:recyclerImage="@{itemInRecycler.data.toString()}" />
+
+</layout>

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.max
 
-class AutoFillGridLayoutManager(context: Context,var columnWidth : Int, var columnWidthChanged : Boolean = true) : GridLayoutManager(context,columnWidth) {
+class AutoFillGridLayoutManager(context: Context, var columnWidth : Int, var columnWidthChanged : Boolean = true) : GridLayoutManager(context,columnWidth) {
 
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
