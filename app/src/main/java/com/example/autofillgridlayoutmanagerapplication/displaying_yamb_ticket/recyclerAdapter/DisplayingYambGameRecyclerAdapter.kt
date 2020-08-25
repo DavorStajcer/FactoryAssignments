@@ -26,7 +26,7 @@ class DisplayingYambGameRecyclerAdapter(
     }
     inner class TextViewHolder(private val textElementBindingLayout: FillingYambTicketTextElementInRecyclerBinding) : RecyclerView.ViewHolder(textElementBindingLayout.root) {
         internal fun bind(position: Int) {
-            textElementBindingLayout.itemInRecyclcer = itemsInRecycler[position]
+            textElementBindingLayout.itemInRecycler = itemsInRecycler[position]
             textElementBindingLayout.viewModel = viewModelReference
             textElementBindingLayout.positionOfItemClicked = position
             textElementBindingLayout.clickable = itemsInRecycler[position].clickable

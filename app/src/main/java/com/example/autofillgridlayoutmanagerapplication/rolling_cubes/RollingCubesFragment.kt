@@ -20,7 +20,7 @@ class RollingCubesFragment() : Fragment(R.layout.rolling_cubes_fragment){
 
 
     private lateinit var viewModel : RollingCubesViewModel
-    private lateinit var imageViews : List<ImageView>
+
     private lateinit var fragmentCubesLayoutDatabinding : RollingCubesFragmentBinding
 
 
@@ -36,16 +36,16 @@ class RollingCubesFragment() : Fragment(R.layout.rolling_cubes_fragment){
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity(),ViewModelFactory( GamesPlayedDatabase.getInstanceOfDatabase(requireContext()))).get(RollingCubesViewModel::class.java)
-        imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
+        val imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
         fragmentCubesLayoutDatabinding.data = RollingCubesBindingData()
 
 
 
         viewModel.setListeners.observe(viewLifecycleOwner, Observer {
             if(it)
-                addListeners()
+                addListeners(imageViews)
             else
-                removeListeners()
+                removeListeners(imageViews)
         })
         viewModel.databidingObject.observe(viewLifecycleOwner, Observer {
             fragmentCubesLayoutDatabinding.data = it
@@ -69,14 +69,14 @@ class RollingCubesFragment() : Fragment(R.layout.rolling_cubes_fragment){
         }
     }
 
-    private fun addListeners() { //ovako kad ih postavim, radi program
+    private fun addListeners(imageViews: List<ImageView>) { //ovako kad ih postavim, radi program
         for ((index, image) in imageViews.withIndex()) {
             image.setOnClickListener {
                 viewModel.changeCubePressedState(index)
             }
         }
     }
-    private fun removeListeners(){
+    private fun removeListeners(imageViews: List<ImageView>){
         for (image in imageViews) {
             image.setOnClickListener(null)
         }
