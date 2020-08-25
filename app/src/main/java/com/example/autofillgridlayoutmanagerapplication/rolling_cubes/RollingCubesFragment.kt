@@ -37,7 +37,7 @@ class RollingCubesFragment() : Fragment(R.layout.rolling_cubes_fragment){
 
         viewModel = ViewModelProvider(requireActivity(),ViewModelFactory( GamesPlayedDatabase.getInstanceOfDatabase(requireContext()))).get(RollingCubesViewModel::class.java)
         imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
-        fragmentCubesLayoutDatabinding.dataForBindingCubes = RollingCubesBindingData()
+        fragmentCubesLayoutDatabinding.data = RollingCubesBindingData()
 
 
 
@@ -48,7 +48,7 @@ class RollingCubesFragment() : Fragment(R.layout.rolling_cubes_fragment){
                 removeListeners()
         })
         viewModel.databidingObject.observe(viewLifecycleOwner, Observer {
-            fragmentCubesLayoutDatabinding.dataForBindingCubes = it
+            fragmentCubesLayoutDatabinding.data = it
         })
         viewModel.buttonForAheadCallIsEnabled.observe(viewLifecycleOwner, Observer {
             btnAheadCall.isEnabled = it
