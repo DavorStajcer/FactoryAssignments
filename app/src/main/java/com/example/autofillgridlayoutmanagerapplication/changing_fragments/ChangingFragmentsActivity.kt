@@ -15,17 +15,14 @@ import kotlinx.android.synthetic.main.changing_fragments.*
 
 class ChangingFragmentsActivity : AppCompatActivity() {
 
-    private val fragmentCubes = RollingCubesFragment()
-    private val fragmentYamb = FillingYambTicketFragment()
-    private val fragmentPastGamesList = DisplayingSavedGamesFragment()
-    private lateinit var viewModel: ChangingFragmentsViewModel
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.changing_fragments)
 
-        viewModel = ViewModelProvider(
+        val fragmentCubes = RollingCubesFragment()
+        val fragmentYamb = FillingYambTicketFragment()
+        val fragmentPastGamesList = DisplayingSavedGamesFragment()
+        val viewModel = ViewModelProvider(
             this,
             ViewModelFactory(
                 GamesPlayedDatabase.getInstanceOfDatabase(this)
@@ -44,7 +41,6 @@ class ChangingFragmentsActivity : AppCompatActivity() {
         TabLayoutMediator(tabLayout,viewPager){tab, position ->
                 tab.text = viewModel.fragemetnNames[position]
         }.attach()
-
 
     }
 

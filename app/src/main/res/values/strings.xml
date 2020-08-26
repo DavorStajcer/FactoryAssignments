@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AutoFillGridLayoutManagerApplication</string>
+    <string name="past_games_text">PAST GAMES</string>
 </resources>

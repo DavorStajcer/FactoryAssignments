@@ -34,26 +34,22 @@ class FillingYambTicketFragment() : Fragment(),IGetPickedItemData, IDisplayPopUp
 
         viewModel = ViewModelProvider(this, ViewModelFactory(GamesPlayedDatabase.getInstanceOfDatabase(requireContext()))).get(FillingYambTicketViewModel::class.java)
         val layoutManager = AutoFillGridLayoutManager(requireContext().applicationContext, ScreenValues.DEVICE_WIDTH.size / ScreenValues.COLUMN_NUMBER.size)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(true)
-        val popUpWhenClicked = DisplayingPopUpDialogForItemClickedInGame()
-        val popUpFinishedGame = DisplayingFinishedGamePopUpDialog()
+        val itemClickedPopUp = DisplayingPopUpDialogForItemClickedInGame()
+        val finishedGamePopUp = DisplayingFinishedGamePopUpDialog()
         val adapter =  DisplayingYambGameRecyclerAdapter(requireContext().applicationContext, listOf())
-        recyclerView.adapter = adapter
         adapter.viewModelReference = viewModel
-        popUpWhenClicked.database = GamesPlayedDatabase.getInstanceOfDatabase(requireContext())
-        popUpWhenClicked.onPopUpOpenListener = this
-        popUpWhenClicked.onButtonYesClickedListener = this
-        popUpFinishedGame.onSaveOrContinueClickedListener = this
-        popUpFinishedGame.isCancelable = false
-        popUpFinishedGame.onViewModelInitializedListener = this
+
+        setUpRecyclerView(layoutManager,adapter)
+        setUpPopItemClickedPopUp(itemClickedPopUp)
+        setUpFinishedGamePopUp(finishedGamePopUp)
+        viewModel.setupObserverForDataAboutGame()
 
         viewModel.isPopUpForEnteringValuesEnabled.observe(viewLifecycleOwner, Observer {
             if(it)
-                popUpWhenClicked.show(requireActivity().supportFragmentManager, "PopUp")
+                itemClickedPopUp.show(requireActivity().supportFragmentManager, "PopUp")
         })
         viewModel.onClickItemPosition.observe(viewLifecycleOwner, Observer {
-            popUpWhenClicked.setPopUpDialogTextForGivenPosition(it)
+            itemClickedPopUp.changeDataForBindingOfItemClickedPopUp(it)
         })
         viewModel.itemsInRecycler.observe(viewLifecycleOwner, Observer {
             adapter.changeYambGameForDisplay(it)
@@ -64,10 +60,10 @@ class FillingYambTicketFragment() : Fragment(),IGetPickedItemData, IDisplayPopUp
         })
         viewModel.finishGameState.observe(viewLifecycleOwner, Observer {
             if(it)
-                popUpFinishedGame.show(requireActivity().supportFragmentManager,"FINISHED GAME")
+                finishedGamePopUp.show(requireActivity().supportFragmentManager,"FINISHED GAME")
         })
         viewModel.totalPoints.observe(viewLifecycleOwner, Observer {
-            popUpFinishedGame.getTotalPoints(it)
+            finishedGamePopUp.getTotalPoints(it)
         })
         viewModel.showToastForGameSaved.observe(viewLifecycleOwner, Observer {
             if(it)
@@ -76,17 +72,39 @@ class FillingYambTicketFragment() : Fragment(),IGetPickedItemData, IDisplayPopUp
 
     }
 
+    private fun setUpRecyclerView(layoutManager: AutoFillGridLayoutManager, adapter: DisplayingYambGameRecyclerAdapter) {
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = adapter
+        recyclerView.setHasFixedSize(true)
+    }
+    private fun setUpPopItemClickedPopUp(itemClickedPopUp : DisplayingPopUpDialogForItemClickedInGame){
+        itemClickedPopUp.database = GamesPlayedDatabase.getInstanceOfDatabase(requireContext())
+        itemClickedPopUp.onPopUpOpenListener = this
+        itemClickedPopUp.onButtonYesClickedListener = this
+    }
+    private fun setUpFinishedGamePopUp(finishedGamePopUp : DisplayingFinishedGamePopUpDialog){
+        finishedGamePopUp.onSaveOrContinueClickedListener = this
+        finishedGamePopUp.isCancelable = false
+        finishedGamePopUp.onViewModelInitializedListener = this
+    }
     override fun getValueInsertedInClickedItem(valueOfItemPicked: Int) {
         viewModel.changeListOfItemsWhenValueInserted(valueOfItemPicked)
+        viewModel.checkIsGameFinished()
+        viewModel.enableButtonForRollingDices()
     }
     override fun sendPositionOfItemClickedToPopUpDialog() {
         viewModel.changePositionOfLastItemClicked()
     }
     override fun saveGame(){
-        viewModel.saveGame()
+        viewModel.saveGameStats()
+        viewModel.savePlayedColumns()
+        viewModel.changeIsGameFinishedState()
+        viewModel.generateStartingItems()
     }
     override fun resetItems(){
-        viewModel.resetAllItems()
+        viewModel.changeIsGameFinishedState()
+        viewModel.generateStartingItems()
+
     }
     override fun sendTotalPoints(){
         viewModel.changeTotalPoints()

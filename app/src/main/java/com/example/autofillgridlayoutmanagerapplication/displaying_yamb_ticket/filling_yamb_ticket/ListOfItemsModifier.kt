@@ -2,6 +2,7 @@ package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.
 
 import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.ColumnInYamb
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.Cubes
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInGame
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.RowIndexOfResultElements
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.YambConstants
@@ -10,8 +11,8 @@ import java.lang.IllegalStateException
 
 object ListOfItemsModifier {
 
-    var positionOfItemClicked = 0
-    var insertedValue = 0
+    private var positionOfItemClicked = 0
+    private var insertedValue = 0
 
     fun getModifiedListWhenValueInserted(position: Int, insertedValue: Int, currentListOfItems : List<ItemInGame>) : List<ItemInGame>{
         this.positionOfItemClicked = position
@@ -175,7 +176,6 @@ object ListOfItemsModifier {
         freezeItems(tempList)
         return tempList
     }
-
     fun getUnfreezedList(currentListOfItems: List<ItemInGame>):List<ItemInGame>{
       for((position,member) in currentListOfItems.withIndex()) {
 
@@ -223,6 +223,7 @@ object ListOfItemsModifier {
         if(item.data == null)
             item.clickable = true
     }
+
     private fun freezeItems(tempList: MutableList<ItemInGame>){
         for(member in tempList)
             member.clickable = false
@@ -241,24 +242,35 @@ object ListOfItemsModifier {
         }
         return currentListOfItems
     }
-    fun isGameFinished(currentListOfItems: List<ItemInGame>) : Boolean{
-        var isFinished = true
-        for((index,member) in currentListOfItems.withIndex()){
-            if(member.data == null && index%6 != 5)
-                isFinished = false
+    fun getListWithFourObjectsEachRepresentingOneColumn(itemList : List<ItemInGame>,currentInsertedGameId : Long) : List<ColumnInYamb>{
+        val mapOfPlayedColumns = getMapOfColumnsFromListOfItems(itemList)
+        val listWithFourObjectsEachRepresentingOneColumn = mutableListOf<ColumnInYamb>()
+        for((key,rowList) in mapOfPlayedColumns){
+            listWithFourObjectsEachRepresentingOneColumn.add(key,
+                ColumnInYamb(
+                    columnId = 0,
+                    correspondingGameId = currentInsertedGameId,
+                    one = rowList[0],
+                    two = rowList[1],
+                    three = rowList[2],
+                    four = rowList[3],
+                    five = rowList[4],
+                    six = rowList[5],
+                    sum_form_one_to_six = rowList[6],
+                    max = rowList[7],
+                    min = rowList[8],
+                    max_min = rowList[9],
+                    two_pairs = rowList[10],
+                    straight = rowList[11],
+                    full = rowList[12],
+                    poker = rowList[13],
+                    yamb = rowList[14],
+                    sum_from_two_pairs_to_yamb = rowList[15]
+                )
+            )
         }
-        return isFinished
+        return listWithFourObjectsEachRepresentingOneColumn
     }
-    fun getTotalPoints(currentListOfItems: List<ItemInGame>) : Int{
-        var totalPoints = 0
-        for((index,member) in currentListOfItems.withIndex()){
-            if(index%YambConstants.COLUMN_NUMBER.value == 5)
-                totalPoints += (member.data ?: 0).toString().toInt()
-        }
-        return totalPoints
-    }
-
-
     fun generateListForRecyclerFromColumnsInDatabase(list : List<ColumnInYamb>) : List<ItemInGame>{
 
         val tempList = mutableListOf<ItemInGame>()
@@ -316,7 +328,8 @@ object ListOfItemsModifier {
         }
         return tempList
     }
-    fun getMapOfColumnsFromListOfItems(currentListOfItems: List<ItemInGame>)  :Map<Int,List<Int?>>{
+
+    private fun getMapOfColumnsFromListOfItems(currentListOfItems: List<ItemInGame>)  :Map<Int,List<Int?>>{
 
         val columnOne = mutableListOf<Int?>()
         val columnTwo = mutableListOf<Int?>()
@@ -353,8 +366,6 @@ object ListOfItemsModifier {
             4 to columnFive
         )
     }
-
-
     private fun isItemClickedInFirstSectionOfYambTicket() : Boolean{
         val row = positionOfItemClicked / 6
         return row < RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index
@@ -363,8 +374,6 @@ object ListOfItemsModifier {
         val row = positionOfItemClicked / 6
         return row < RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index && row > RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index
     }
-
-
     private fun isRowResult(row : Int) : Boolean{
         return row == RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index ||
                 row == RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_TWO.index ||

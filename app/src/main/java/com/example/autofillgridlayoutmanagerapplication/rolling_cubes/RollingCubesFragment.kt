@@ -18,11 +18,8 @@ import kotlinx.android.synthetic.main.rolling_cubes_fragment.*
 
 class RollingCubesFragment() : Fragment(R.layout.rolling_cubes_fragment){
 
-
     private lateinit var viewModel : RollingCubesViewModel
-
     private lateinit var fragmentCubesLayoutDatabinding : RollingCubesFragmentBinding
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +35,6 @@ class RollingCubesFragment() : Fragment(R.layout.rolling_cubes_fragment){
         viewModel = ViewModelProvider(requireActivity(),ViewModelFactory( GamesPlayedDatabase.getInstanceOfDatabase(requireContext()))).get(RollingCubesViewModel::class.java)
         val imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
         fragmentCubesLayoutDatabinding.data = RollingCubesBindingData()
-
 
 
         viewModel.setListeners.observe(viewLifecycleOwner, Observer {

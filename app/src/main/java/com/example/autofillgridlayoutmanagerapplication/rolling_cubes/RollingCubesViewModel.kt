@@ -87,35 +87,26 @@ class RollingCubesViewModel(val database: GamesPlayedDatabase) : ViewModel(), IH
             }
         )
 
+        compositeDisposable.add(
+            database.getDataAboutRolledCubesDao().getData(1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(){
+                    if(it.enableButtonForRollingDices){
+                        buttonForRollingCubesIsEnabled_.value = true
+                        buttonForAheadCallIsEnabled_.value = true
+                    }
+                }
+        )
+
 
     }
 
 
 
-    fun changeButtonsAndListeners(){
-        buttonPressedCounter++
-        if(isButtonPressedFirstTime()){
-            setListeners_.value = !(setListeners.value ?: false)
-            buttonForAheadCallIsEnabled_.value = true
-        }
-        else{
-            setListeners_.value = !(setListeners.value ?: false)
-            buttonForAheadCallIsEnabled_.value = false
-            buttonForRollingCubesIsEnabled_.value = true
-        }
-    }
-    fun saveRolledStatsIfRollingIsOver(){
-        if(buttonPressedCounter == 2){
-            saveDiceRolledAndAheadCallInDatabase()
-            buttonPressedCounter = 0
-        }
-    }
-    fun changeCubePressedState(cubeNumber : Int){
-        cubes[cubeNumber].pressed = !cubes[cubeNumber].pressed
-    }
-    fun changeAheadCall(){
-        isAheadCallCalled = true
-    }
+
+
+
     fun rollEachCube(){
         for (cube in cubes)
             cube.rollDice()
@@ -133,6 +124,31 @@ class RollingCubesViewModel(val database: GamesPlayedDatabase) : ViewModel(), IH
                 btnRollDicesText = "Roll Dices"
             )
     }
+    fun changeButtonsAndListeners(){
+        buttonPressedCounter++
+        if(isButtonPressedFirstTime()){
+            setListeners_.value = !(setListeners.value ?: false)
+            buttonForAheadCallIsEnabled_.value = true
+        }
+        else{
+            setListeners_.value = !(setListeners.value ?: false)
+            buttonForAheadCallIsEnabled_.value = false
+            buttonForRollingCubesIsEnabled_.value = false
+        }
+    }
+    fun saveRolledStatsIfRollingIsOver(){
+        Log.i("rolled","Saving diceRolled")
+        if(buttonPressedCounter == 2){
+            saveDiceRolledAndAheadCallInDatabase()
+            buttonPressedCounter = 0
+        }
+    }
+    fun changeCubePressedState(indexOfCubePressed : Int){
+        cubes[indexOfCubePressed].pressed = !cubes[indexOfCubePressed].pressed
+    }
+    fun changeAheadCall(){
+        isAheadCallCalled = true
+    }
     private fun isButtonPressedFirstTime() : Boolean{
         return buttonPressedCounter == 1
     }
@@ -141,7 +157,7 @@ class RollingCubesViewModel(val database: GamesPlayedDatabase) : ViewModel(), IH
         val tempDiceRolled  : List<Int> = transformCubesPicturesResourcesIntoListOfNumberValues()
         val cubes =
             Cubes(cubeOne = tempDiceRolled[0], cubeTwo = tempDiceRolled[1], cubeThree = tempDiceRolled[2], cubeFour = tempDiceRolled[3], cubeFive = tempDiceRolled[4], cubeSix = tempDiceRolled[5])
-
+        Log.i("rolled","cubes for saving : \n $cubes \n\n")
         compositeDisposable.add(
             Completable.fromAction {
             database.getDataAboutRolledCubesDao().insertData(

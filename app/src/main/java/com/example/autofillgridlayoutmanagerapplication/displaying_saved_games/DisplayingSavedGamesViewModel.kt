@@ -1,15 +1,15 @@
 package com.example.autofillgridlayoutmanagerapplication.displaying_saved_games
 
-import android.util.Log
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.GameStat
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.filling_yamb_ticket.ListOfItemsModifier
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInGame
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.Adapters
-import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.FloatingActionButtton
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IHasObservers
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IViewModelForDisplayingYambTicket
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,7 +18,7 @@ import io.reactivex.schedulers.Schedulers
 
 
 
-class DisplayingSavedGamesViewModel(val database: GamesPlayedDatabase) : ViewModel(), IViewModelForDisplayingYambTicket, IHasObservers {
+class DisplayingSavedGamesViewModel(val context: Context) : ViewModel(), IViewModelForDisplayingYambTicket, IHasObservers {
 
     private val listOfGames_ : MutableLiveData<List<GameStat>> = MutableLiveData()
     val listOfGames : LiveData<List<GameStat>>
@@ -36,8 +36,8 @@ class DisplayingSavedGamesViewModel(val database: GamesPlayedDatabase) : ViewMod
     val currentAdapter : LiveData<Adapters>
         get() = currentAdapter_
 
-    private val floatingActionButton_ : MutableLiveData<FloatingActionButtton> = MutableLiveData(FloatingActionButtton.DISABLED)
-    val floatingActionButton : LiveData<FloatingActionButtton>
+    private val floatingActionButton_ : MutableLiveData<Boolean> = MutableLiveData(true)
+    val floatingActionButton : LiveData<Boolean>
         get() = floatingActionButton_
 
     private val isDatabaseEmpty_ : MutableLiveData<Boolean> = MutableLiveData(true)
@@ -49,9 +49,13 @@ class DisplayingSavedGamesViewModel(val database: GamesPlayedDatabase) : ViewMod
     private var gameIdForChangingTextFromFragment : Long = 0
 
 
-    fun getGameStatsFromDatabase(){
+    init {
+        getInitialGameStatsFromDatabase()
+    }
+
+    fun getInitialGameStatsFromDatabase(){
         compositeDisposable.add(
-            database.getGameStatsDao().getAllGameStats()
+            GamesPlayedDatabase.getInstanceOfDatabase(context).getGameStatsDao().getAllGameStats()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(){
@@ -66,7 +70,7 @@ class DisplayingSavedGamesViewModel(val database: GamesPlayedDatabase) : ViewMod
 
     }
     fun showClickedGame(gameId : Long) {
-        changeListOfItemsForAdapter(gameId)
+        chnageListOfItemForDisplayingGame(gameId)
         changeTextAboveRecycler()
         changeAdapter()
     }
@@ -76,15 +80,15 @@ class DisplayingSavedGamesViewModel(val database: GamesPlayedDatabase) : ViewMod
         else
            currentAdapter_.value = Adapters.GAME_STATS
     }
-    fun changeFloatingActionButtonState(state : FloatingActionButtton){
-            floatingActionButton_.value = state
+    fun changeFloatingActionButtonState(){
+            floatingActionButton_.value = !floatingActionButton_.value!!
     }
     fun changeTextAboveRecycler() {
         if(currentAdapter.value == Adapters.GAME_STATS)
-            textAboveRecycler_.value = "PAST GAMES"
+            textAboveRecycler_.value = context.getString(R.string.past_games_text)
         else{
                 compositeDisposable.add(
-                    database.getGameStatsDao().getGameStat(gameIdForChangingTextFromFragment)
+                    GamesPlayedDatabase.getInstanceOfDatabase(context).getGameStatsDao().getGameStat(gameIdForChangingTextFromFragment)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(){
@@ -93,15 +97,15 @@ class DisplayingSavedGamesViewModel(val database: GamesPlayedDatabase) : ViewMod
                 )
         }
     }
-    private fun changeListOfItemsForAdapter(gameId: Long){
+    private fun chnageListOfItemForDisplayingGame(gameId: Long){
         compositeDisposable.add(
-            database.getGameStatsDao().getGameStatsWithCorrespondingColumns(gameId)
+            GamesPlayedDatabase.getInstanceOfDatabase(context).getGameStatsDao().getGameStatsWithCorrespondingColumns(gameId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     this.listOfItemsInRecyclerForDisplaying_.value = ListOfItemsModifier.generateListForRecyclerFromColumnsInDatabase(it.columns)
                 }){
-                    Log.i("adapter","ERROR ----------------------> ${it.message}")
+                    throw it
                 }
         )
 
@@ -110,7 +114,6 @@ class DisplayingSavedGamesViewModel(val database: GamesPlayedDatabase) : ViewMod
     override fun changeIsPopUpDialogEnabledState(position: Int,clickable : Boolean) {
         //do nothing when clicked
     }
-
     override fun disposeOfObservers() {
         compositeDisposable.dispose()
     }
