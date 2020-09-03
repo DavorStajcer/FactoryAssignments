@@ -13,11 +13,9 @@ class DataAboutRolledCubes(
     val cubes : Cubes,
     val aheadCall : Boolean,
     val isRecyclerFrozen : Boolean,
-    val enableButtonForRollingDices : Boolean
+    val enableRollingDices : Boolean
 
 )
-
-
 
 data class Cubes(
     val cubeOne: Int,

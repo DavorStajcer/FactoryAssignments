@@ -10,9 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
-import com.example.autofillgridlayoutmanagerapplication.databinding.RollingCubesBindingData
 import com.example.autofillgridlayoutmanagerapplication.databinding.RollingCubesFragmentBinding
-import com.example.autofillgridlayoutmanagerapplication.view_model_factory.ViewModelFactory
+import com.example.autofillgridlayoutmanagerapplication.view_model_factories.ViewModelFactory
 import kotlinx.android.synthetic.main.rolling_cubes_fragment.*
 
 
@@ -31,53 +30,40 @@ class RollingCubesFragment() : Fragment(R.layout.rolling_cubes_fragment){
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(requireActivity(),ViewModelFactory( GamesPlayedDatabase.getInstanceOfDatabase(requireContext()))).get(RollingCubesViewModel::class.java)
-        val imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
-        fragmentCubesLayoutDatabinding.data = RollingCubesBindingData()
-
-
-        viewModel.setListeners.observe(viewLifecycleOwner, Observer {
-            if(it)
-                addListeners(imageViews)
-            else
-                removeListeners(imageViews)
-        })
-        viewModel.databidingObject.observe(viewLifecycleOwner, Observer {
-            fragmentCubesLayoutDatabinding.data = it
-        })
-        viewModel.buttonForAheadCallIsEnabled.observe(viewLifecycleOwner, Observer {
-            btnAheadCall.isEnabled = it
-        })
-        viewModel.buttonForRollingCubesIsEnabled.observe(viewLifecycleOwner, Observer<Boolean>{
-            btnRollDice.isEnabled = it
-        })
-
-        btnRollDice.setOnClickListener { _ ->
-            viewModel.rollEachCube()
-            viewModel.bindPictureData()
-            viewModel.changeButtonsAndListeners()
-            viewModel.saveRolledStatsIfRollingIsOver()
-        }
-        btnAheadCall.setOnClickListener { _ ->
-            viewModel.changeAheadCall()
-            btnAheadCall.setBackgroundResource(R.drawable.btn_ahead_call_pressed)
-        }
+        initializeViewModel()
+        fragmentCubesLayoutDatabinding.viewModel = viewModel
+        addClickListenersOnCubeImages()
+        initializeObserverForUiChanges()
+        setClickListenerOnButtons()
     }
 
-    private fun addListeners(imageViews: List<ImageView>) { //ovako kad ih postavim, radi program
+
+
+    private fun initializeViewModel(){
+        viewModel = ViewModelProvider(requireActivity(),ViewModelFactory( GamesPlayedDatabase.getInstanceOfDatabase(requireContext()))).get(RollingCubesViewModel::class.java)
+    }
+    private fun addClickListenersOnCubeImages() {
+        val imageViews = listOf<ImageView>(ivCube1,ivCube2,ivCube3,ivCube4,ivCube5,ivCube6)
         for ((index, image) in imageViews.withIndex()) {
             image.setOnClickListener {
                 viewModel.changeCubePressedState(index)
             }
         }
     }
-    private fun removeListeners(imageViews: List<ImageView>){
-        for (image in imageViews) {
-            image.setOnClickListener(null)
+    private fun initializeObserverForUiChanges(){
+        viewModel.rollingCubesUI.observe(viewLifecycleOwner, Observer {
+            fragmentCubesLayoutDatabinding.data = it
+            fragmentCubesLayoutDatabinding.executePendingBindings()
+        })
+    }
+    private fun setClickListenerOnButtons(){
+        btnRollDice.setOnClickListener {
+            viewModel.rollCubesAndChangeUiState()
+        }
+        btnAheadCall.setOnClickListener {
+            viewModel.changeUiAfterAheadCallButtonIsPressed()
         }
     }
-
     override fun onDestroyView() {
         viewModel.disposeOfObservers()
         super.onDestroyView()

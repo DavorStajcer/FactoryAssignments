@@ -8,9 +8,12 @@ import com.example.autofillgridlayoutmanagerapplication.database.*
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.Cubes
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.DataAboutRolledCubes
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.GameStat
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInGame
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.PopUpsData
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.filling_yamb_ticket.recyclerAdapter.ItemInGame
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IHasObservers
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IViewModelForDisplayingYambTicket
+import com.example.autofillgridlayoutmanagerapplication.list_and_game_data_modifiers.GameDataModifier
+import com.example.autofillgridlayoutmanagerapplication.list_and_game_data_modifiers.ListOfItemsModifier
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,67 +31,54 @@ class FillingYambTicketViewModel(val database  :GamesPlayedDatabase) : ViewModel
     val isPopUpForEnteringValuesEnabled : LiveData<Boolean>
         get()= isPopUpForEnteringValuesEnabled_
 
-    private val  areDicesRolledTwice_ : MutableLiveData<Boolean> = MutableLiveData()
-    val areDicesRolledTwice : LiveData<Boolean>
-        get()= areDicesRolledTwice_
-
     private val itemsInRecycler_ : MutableLiveData<List<ItemInGame>> = MutableLiveData()
     val itemsInRecycler : LiveData<List<ItemInGame>>
         get() = itemsInRecycler_
 
-    private val finishedGame_ = MutableLiveData<Boolean>(false)
-    val  finishGameState : LiveData<Boolean>
-        get() = finishedGame_
-
-    private val totalPoints_ = MutableLiveData<Int>()
-    val  totalPoints : LiveData<Int>
-        get() = totalPoints_
+    private val isPopUpForFinishedGameEnabled_ = MutableLiveData<Boolean>(false)
+    val  isPopUpForFinishedGameEnabled : LiveData<Boolean>
+        get() = isPopUpForFinishedGameEnabled_
 
     private val showToastForGameSaved_ = MutableLiveData<Boolean>(false)
     val showToastForGameSaved : LiveData<Boolean>
         get() = showToastForGameSaved_
 
-    private val onClickItemPosition_ : MutableLiveData<Int> = MutableLiveData()
-    val onClickItemPosition : LiveData<Int>
-        get() = onClickItemPosition_
 
-    var diceRolled = listOf<Int>()
-    var aheadCall = false
+    private var aheadCall = false
     private val compositeDisposable = CompositeDisposable()
     private var positioOfLastItemClickedTemp = 0
     private var idOfLastInsertedGameStat : Long = 0
 
     init {
-        //generateStartingItems()
-        Log.i("starting","init")
-        generateStartingTestItems()
+        displayStartingItems()
+      //displayStartingTestItems()  //for testing the end of game
 
     }
 
-    fun savePlayedColumns(){
-
+    private fun savePlayedColumns(){
         compositeDisposable.add(
             Completable.fromAction {
-            val listOfObjectsRepresentingColumns = ListOfItemsModifier.getListWithFourObjectsEachRepresentingOneColumn( itemsInRecycler_.value!!,idOfLastInsertedGameStat)
-            database.getColumnDao().insertColumns(
-                listOfObjectsRepresentingColumns[0],
-                listOfObjectsRepresentingColumns[1],
-                listOfObjectsRepresentingColumns[2],
-                listOfObjectsRepresentingColumns[3],
-                listOfObjectsRepresentingColumns[4]
-            )
-        }.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    showToastMessage()
+                val listOfObjectsRepresentingColumns = ListOfItemsModifier.getListWithFourObjectsEachRepresentingOneColumn( itemsInRecycler_.value!!,idOfLastInsertedGameStat)
+                database.getColumnDao().insertColumns(
+                    listOfObjectsRepresentingColumns[0],
+                    listOfObjectsRepresentingColumns[1],
+                    listOfObjectsRepresentingColumns[2],
+                    listOfObjectsRepresentingColumns[3],
+                    listOfObjectsRepresentingColumns[4]
+                )
+            }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        showToastMessage()
+                        displayStartingItems()
+                    }
+                ){
+                    throw  it
                 }
-            ){
-                throw  it
-            }
         )
     }
-    fun saveGameStats(){
+    fun saveGameStatsAndPlayedColumnsAndDisplayStartingItems(){
         compositeDisposable.add(
             Completable.fromAction {
                 val calendar = Calendar.getInstance()
@@ -98,32 +88,39 @@ class FillingYambTicketViewModel(val database  :GamesPlayedDatabase) : ViewModel
                 this.idOfLastInsertedGameStat = database.getGameStatsDao().insertGameStats(GameStat(0, date, totalPoints)) //id is autogenerated
             }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe()
+                .subscribe(){
+                    savePlayedColumns()
+                }
         )
     }
-    fun changeListOfItemsWhenValueInserted(valueOfItemPicked: Int){
-        this.itemsInRecycler_.value = ListOfItemsModifier.getModifiedListWhenValueInserted(onClickItemPosition.value!!, valueOfItemPicked,itemsInRecycler_.value!!)
+    fun makeChangesAfterValueIsInserted(valueOfItemPicked: Int){
+       itemsInRecycler_.value = ListOfItemsModifier.getModifiedListWhenValueInserted(position = positioOfLastItemClickedTemp,insertedValue =  valueOfItemPicked,currentListOfItems = itemsInRecycler_.value!!)
+        checkIsGameFinished()
+        enableButtonForRollingDices()
     }
-    fun checkIsGameFinished(){
+    private fun checkIsGameFinished(){
         if(GameDataModifier.isGameFinished(itemsInRecycler_.value!!))
-            changeIsGameFinishedState()
+            saveTotalPointsData()
     }
-    fun unFreezeAllItems(){
+    private fun unFreezeAllItems(){
         if(aheadCall)
             this.itemsInRecycler_.value = ListOfItemsModifier.getAheadCallPressedList(itemsInRecycler_.value!!)
         else
-            this.itemsInRecycler_.value = ListOfItemsModifier.getUnfreezedList(itemsInRecycler_.value!!)
+            this.itemsInRecycler_.value = ListOfItemsModifier.unfreezeItems(itemsInRecycler_.value!!)
     }
-    fun changePositionOfLastItemClicked(){
-        onClickItemPosition_.value = positioOfLastItemClickedTemp
+    private fun saveTotalPointsData(){
+        compositeDisposable.add(
+            Completable.fromAction {
+                database.getPopUpsDataDao().insertPopUpsData(PopUpsData(id = 1,positionOfItemClicked = 0,totalPoints = GameDataModifier.getTotalPoints(itemsInRecycler_.value!!)))
+            }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(){
+                    Log.i("popUpData","Data about total points saved")
+                    isPopUpForFinishedGameEnabled_.value =  !isPopUpForFinishedGameEnabled_.value!!
+                }
+        )
     }
-    fun changeIsGameFinishedState(){
-        finishedGame_.value =  !finishedGame_.value!!
-    }
-    fun changeTotalPoints(){
-        this.totalPoints_.value = GameDataModifier.getTotalPoints(itemsInRecycler_.value!!)
-    }
-    fun enableButtonForRollingDices(){
+    private fun enableButtonForRollingDices(){
         compositeDisposable.add(
             Completable.fromAction {
                 database.getDataAboutRolledCubesDao().insertData(
@@ -132,7 +129,7 @@ class FillingYambTicketViewModel(val database  :GamesPlayedDatabase) : ViewModel
                         cubes = Cubes(1, 1, 1, 1, 1, 1),
                         aheadCall = false,
                         isRecyclerFrozen = true,
-                        enableButtonForRollingDices = true
+                        enableRollingDices = true
                     )
                 )
             }.subscribeOn(Schedulers.io())
@@ -140,9 +137,10 @@ class FillingYambTicketViewModel(val database  :GamesPlayedDatabase) : ViewModel
                 .subscribe()
         )
     }
-    fun generateStartingItems(){
+    fun displayStartingItems(){
         compositeDisposable.add(
-            Single.just(ListOfItemsModifier.generateStartingItems())
+            Single.just(
+                ListOfItemsModifier.generateStartingItems())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -152,7 +150,6 @@ class FillingYambTicketViewModel(val database  :GamesPlayedDatabase) : ViewModel
                 }
         )
     }
-
     private fun showToastMessage(){
         this.showToastForGameSaved_.value = true
         this.showToastForGameSaved_.value = false
@@ -163,43 +160,43 @@ class FillingYambTicketViewModel(val database  :GamesPlayedDatabase) : ViewModel
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(){
-                    Log.i("starting","observer for data about game")
-                    this.areDicesRolledTwice_.value = !it.isRecyclerFrozen
-                    if(!it.isRecyclerFrozen){
-                        aheadCall = it.aheadCall
-                        diceRolled = GameDataModifier.generateDiceRolledWithDataFromDatabase(it.cubes)
-                    }
+                    this.aheadCall = it.aheadCall
+                    if(!it.isRecyclerFrozen)
+                        unFreezeAllItems()
                 }
         )
-
     }
-
-
-    //za generiranje pocetnog listica pomocu kojeg testiram kraj igre
-    private fun generateStartingTestItems() {
-      compositeDisposable.add(
-          Single.just(ListOfItemsModifier.generateStartingTestItems())
-              .subscribeOn(Schedulers.io())
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribe({
-                  Log.i("starting","statrting items : $it")
-                  itemsInRecycler_.value = it
-              },{
-                  throw it
-              })
-      )
-    }
-
-    override fun changeIsPopUpDialogEnabledState(position: Int,clickable : Boolean){
+    override fun reactOnItemClicked(position: Int, clickable : Boolean){
         if(clickable){
-            positioOfLastItemClickedTemp = position
-            isPopUpForEnteringValuesEnabled_.value = true
-            isPopUpForEnteringValuesEnabled_.value = false
+            compositeDisposable.add(
+                Completable.fromAction {
+                    database.getPopUpsDataDao().insertPopUpsData(PopUpsData(id = 1,positionOfItemClicked = position,totalPoints = 0))
+                }.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(){
+                        positioOfLastItemClickedTemp = position
+                        isPopUpForEnteringValuesEnabled_.value = true
+                        isPopUpForEnteringValuesEnabled_.value = false
+                    }
+            )
         }
-
     }
     override fun disposeOfObservers(){
         compositeDisposable.dispose()
     }
+
+    /*    private fun displayStartingTestItems() {
+        compositeDisposable.add(
+            Single.just(
+                ListOfItemsModifier.generateStartingTestItems())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    itemsInRecycler_.value = it
+                },{
+                    throw it
+                })
+        )
+    }*/
 
 }

@@ -1,12 +1,11 @@
 package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.displaying_pop_up_dialog_when_item_clicked
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
 import com.example.autofillgridlayoutmanagerapplication.databinding.DisplayingPopUpDialogWhenItemClickedBindingData
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.filling_yamb_ticket.GameDataModifier
+import com.example.autofillgridlayoutmanagerapplication.list_and_game_data_modifiers.GameDataModifier
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IHasObservers
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.RowIndexOfResultElements
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,11 +27,6 @@ class DisplayingPopUpForItemClickedViewModel (val database: GamesPlayedDatabase)
     val dataForBinding : LiveData<DisplayingPopUpDialogWhenItemClickedBindingData>
         get() = dataForBinding_
 
-    private val recivePositionOfPickedItem_ = MutableLiveData<Boolean>(false)
-    val recivePositionOfPickedItem : LiveData<Boolean>
-        get() = recivePositionOfPickedItem_
-
-
     private var diceRolled = listOf<Int>()
     private var positionOfItemClickedInRecycler = 0
     private var valueForInput = 0
@@ -48,56 +42,55 @@ class DisplayingPopUpForItemClickedViewModel (val database: GamesPlayedDatabase)
 
 
     init {
-        setDiceRolleDatabaseObserverAndAllowRecivingPositionOfItemPicked()
+        setDiceRolledDatabaseObserver()
+        setPositionOfItemClickedAndTotalPointsObserver()
     }
 
 
-    fun chnageDisplayingBindingData(positionOfItemClickedInRecycler: Int) {
+    private fun changeUi(positionOfItemClickedInRecycler: Int) {
         this.positionOfItemClickedInRecycler = positionOfItemClickedInRecycler
         this.valueForInput = 0
         val textForDisplay = getTextForDisplay()
-        Log.i("rolled","$diceRolled")
         val pictureSourceList : List<Int> = GameDataModifier.mapNumbersRolledToPicutresForDisplaying(diceRolled)
-
         changeDataforBinding(textForDisplay,pictureSourceList)
     }
 
     fun sendDataOfItemPickedBack(){
-        SendDataOfItemChosen.ENABLED.positionOfItemChosen = positionOfItemClickedInRecycler
         SendDataOfItemChosen.ENABLED.valueForInput = valueForInput
         sendingInsertedValueOfChosenItem_.value = SendDataOfItemChosen.ENABLED
         sendingInsertedValueOfChosenItem_.value = SendDataOfItemChosen.DISABLED
 
     }
-    fun changeShouldPopUpRecivePoistionOfPickedItem(){
-        this.recivePositionOfPickedItem_.value = !recivePositionOfPickedItem_.value!!
-    }
 
-    private fun setDiceRolleDatabaseObserverAndAllowRecivingPositionOfItemPicked(){
+
+    private fun setDiceRolledDatabaseObserver(){
         compositeDisposable.add(
             database.getDataAboutRolledCubesDao().getData(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Log.i("rolled","Pop up cubes recived : ${it.cubes}")
                     this.diceRolled = GameDataModifier.generateDiceRolledWithDataFromDatabase(it.cubes)
-                    Log.i("rolled","Pop up modified doce rolled: $diceRolled")
-                    changeShouldPopUpRecivePoistionOfPickedItem()
-                },{
-                    throw it
                 }){
-                    Log.i("rolled","Receiving dice rolled in pop up COMPLETED")
+                    throw it
+                }
+        )
+    }
+    private fun setPositionOfItemClickedAndTotalPointsObserver(){
+        compositeDisposable.add(
+            database.getPopUpsDataDao().getPopUpsData(1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(){
+                    this.positionOfItemClickedInRecycler = it.positionOfItemClicked
+                    changeUi(positionOfItemClickedInRecycler)
                 }
         )
     }
     private fun changeDataforBinding(textForDisplay : String, pictureSourceList : List<Int>){
         dataForBinding_.value = DisplayingPopUpDialogWhenItemClickedBindingData(pictureSourceList[0], pictureSourceList[1], pictureSourceList[2], pictureSourceList[3], pictureSourceList[4], pictureSourceList[5], textForDisplay)
     }
-
-
     private fun getTextForDisplay() : String {
         val rowIndex = positionOfItemClickedInRecycler / 6
-
         return if(rowIsInTheFirstSection())
             getTextForItemsFromOneToSix()
         else {
@@ -113,9 +106,6 @@ class DisplayingPopUpForItemClickedViewModel (val database: GamesPlayedDatabase)
             }
         }
     }
-
-
-
     private fun rowIsInTheFirstSection() : Boolean {
         val rowIndex = positionOfItemClickedInRecycler / 6
         return rowIndex < RowIndexOfResultElements.INDEX_OF_RESULT_ROW_ELEMENT_ONE.index

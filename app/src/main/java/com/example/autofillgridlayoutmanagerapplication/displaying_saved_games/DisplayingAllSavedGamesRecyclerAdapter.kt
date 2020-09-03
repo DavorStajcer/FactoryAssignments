@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.GameStat
 import com.example.autofillgridlayoutmanagerapplication.databinding.DisplayingSavedGamesBindingData
 import com.example.autofillgridlayoutmanagerapplication.databinding.SavedGamesReyclerElementBinding
@@ -20,8 +21,8 @@ class DisplayingAllSavedGamesRecyclerAdapter(
 
         internal fun bind(position: Int){
             databindingLayout.data = DisplayingSavedGamesBindingData(
-                date = "Date: ${gamesToDisplay[position].date}",
-                totalPoints = "Points: ${gamesToDisplay[position].totalPoints}"
+                date = context.getString(R.string.game_stat_date,gamesToDisplay[position].date),
+                totalPoints = context.getString(R.string.game_stat_points,gamesToDisplay[position].totalPoints.toString())
             )
             databindingLayout.onClickListener = onClickListener
             databindingLayout.gameId = gamesToDisplay[position].gameId

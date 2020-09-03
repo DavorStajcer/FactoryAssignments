@@ -16,13 +16,12 @@ interface IDisplayPopUpListener{
     fun sendPositionOfItemClickedToPopUpDialog()
 }
 interface ISaveOrContinueListener{
-    fun saveGame()
+    fun resetItemsAndSaveGame()
     fun resetItems()
 }
-interface IViewModelForDisplayingYambTicket {
-    fun changeIsPopUpDialogEnabledState(position: Int,clickable : Boolean)
-}
-
 interface IHasObservers{
     fun disposeOfObservers()
+}
+interface IViewModelForDisplayingYambTicket {
+    fun reactOnItemClicked(position: Int, clickable : Boolean)
 }

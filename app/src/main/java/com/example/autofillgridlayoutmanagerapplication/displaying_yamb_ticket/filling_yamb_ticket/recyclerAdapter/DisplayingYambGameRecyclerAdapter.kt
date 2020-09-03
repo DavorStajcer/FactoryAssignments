@@ -1,4 +1,4 @@
-package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter
+package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.filling_yamb_ticket.recyclerAdapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -13,23 +13,23 @@ import java.lang.IllegalArgumentException
 
 class DisplayingYambGameRecyclerAdapter(
     private val context : Context,
-    private var itemsInRecycler : List<ItemInGame>
+    private var listOfItemsInRecycler : List<ItemInGame>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var viewModelReference : IViewModelForDisplayingYambTicket? = null
 
     inner class ImageViewHolder(private val imageElementBindingLayout: FillingYambTicketImageElementInRecyclerBinding) : RecyclerView.ViewHolder(imageElementBindingLayout.root) {
         internal fun bind(position: Int) {
-            imageElementBindingLayout.itemInRecycler = itemsInRecycler[position]
+            imageElementBindingLayout.itemInRecycler = listOfItemsInRecycler[position]
             imageElementBindingLayout.executePendingBindings()
         }
     }
     inner class TextViewHolder(private val textElementBindingLayout: FillingYambTicketTextElementInRecyclerBinding) : RecyclerView.ViewHolder(textElementBindingLayout.root) {
         internal fun bind(position: Int) {
-            textElementBindingLayout.itemInRecycler = itemsInRecycler[position]
+            textElementBindingLayout.itemInGame = listOfItemsInRecycler[position]
             textElementBindingLayout.viewModel = viewModelReference
             textElementBindingLayout.positionOfItemClicked = position
-            textElementBindingLayout.clickable = itemsInRecycler[position].clickable
+            textElementBindingLayout.clickable = listOfItemsInRecycler[position].clickable
             textElementBindingLayout.executePendingBindings()
         }
     }
@@ -48,13 +48,13 @@ class DisplayingYambGameRecyclerAdapter(
         }
     }
     override fun getItemCount(): Int {
-        return itemsInRecycler.count()
+        return listOfItemsInRecycler.count()
     }
     override fun getItemViewType(position: Int): Int {
-        return itemsInRecycler[position].layoutId
+        return listOfItemsInRecycler[position].layoutId
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(itemsInRecycler[position].layoutId ){
+        when(listOfItemsInRecycler[position].layoutId ){
             R.layout.filling_yamb_ticket_text_element_in_recycler -> { (holder as TextViewHolder).bind(position)
             }
             R.layout.filling_yamb_ticket_image_element_in_recycler -> {(holder as ImageViewHolder).bind(position)
@@ -64,7 +64,7 @@ class DisplayingYambGameRecyclerAdapter(
     }
 
     fun changeYambGameForDisplay(newList :List<ItemInGame>){
-        this.itemsInRecycler = newList
+        this.listOfItemsInRecycler = newList
         notifyDataSetChanged()
     }
 

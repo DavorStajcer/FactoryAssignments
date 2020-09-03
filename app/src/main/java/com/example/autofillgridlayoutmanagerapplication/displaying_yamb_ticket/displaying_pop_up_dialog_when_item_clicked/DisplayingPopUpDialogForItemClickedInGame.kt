@@ -9,24 +9,23 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
-import com.example.autofillgridlayoutmanagerapplication.databinding.ItemClickedPopUpDialogBinding
+import com.example.autofillgridlayoutmanagerapplication.databinding.DisplayingPopUpWhenItemClickedBinding
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IDisplayPopUpListener
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IGetPickedItemData
-import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.ISetLastItemClickedInPopUpDialog
-import com.example.autofillgridlayoutmanagerapplication.view_model_factory.ViewModelFactory
+import com.example.autofillgridlayoutmanagerapplication.view_model_factories.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.item_clicked_pop_up_dialog.*
+import kotlinx.android.synthetic.main.displaying_pop_up_when_item_clicked.*
 
-class DisplayingPopUpDialogForItemClickedInGame() : BottomSheetDialogFragment(), ISetLastItemClickedInPopUpDialog {
+class DisplayingPopUpDialogForItemClickedInGame() : BottomSheetDialogFragment(){
 
     private var viewModel : DisplayingPopUpForItemClickedViewModel? = null
     var onPopUpOpenListener : IDisplayPopUpListener? = null
     var onButtonYesClickedListener : IGetPickedItemData? = null
     var database : GamesPlayedDatabase? = null
-    lateinit var popUpBindingLayout : ItemClickedPopUpDialogBinding
+    lateinit var popUpBindingLayout : DisplayingPopUpWhenItemClickedBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        popUpBindingLayout = ItemClickedPopUpDialogBinding.inflate(inflater,container,false)
+        popUpBindingLayout = DisplayingPopUpWhenItemClickedBinding.inflate(inflater,container,false)
         Log.i("recive","onCreateView")
 
         return popUpBindingLayout.root
@@ -45,11 +44,7 @@ class DisplayingPopUpDialogForItemClickedInGame() : BottomSheetDialogFragment(),
             if(it == SendDataOfItemChosen.ENABLED)
                 onButtonYesClickedListener!!.getValueInsertedInClickedItem(it.valueForInput)
         })
-        viewModel!!.recivePositionOfPickedItem.observe(this, Observer {
-            Log.i("recive","$it")
-            if(it)
-                onPopUpOpenListener!!.sendPositionOfItemClickedToPopUpDialog()
-        })
+
 
         btnDialogYes.setOnClickListener {
             viewModel?.sendDataOfItemPickedBack()
@@ -60,16 +55,4 @@ class DisplayingPopUpDialogForItemClickedInGame() : BottomSheetDialogFragment(),
         }
 
     }
-
-    override fun changeDataForBindingOfItemClickedPopUp(positionOfItemClicked: Int) {
-        viewModel!!.chnageDisplayingBindingData(positionOfItemClicked)
-    }
-
-    override fun onDetach() {
-        viewModel!!.changeShouldPopUpRecivePoistionOfPickedItem()
-        super.onDetach()
-    }
-
-
-
 }

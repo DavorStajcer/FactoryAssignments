@@ -1,22 +1,19 @@
-package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.filling_yamb_ticket
+package com.example.autofillgridlayoutmanagerapplication.list_and_game_data_modifiers
 
 import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.Cubes
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInGame
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.filling_yamb_ticket.recyclerAdapter.ItemInGame
 import com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.YambConstants
 
 object GameDataModifier {
-
     fun generateDiceRolledWithDataFromDatabase(cubesRolled : Cubes) : List<Int>{
         val tempDiceRolledList = mutableListOf<Int>()
-
         tempDiceRolledList.add(cubesRolled.cubeOne)
         tempDiceRolledList.add(cubesRolled.cubeTwo)
         tempDiceRolledList.add(cubesRolled.cubeThree)
         tempDiceRolledList.add(cubesRolled.cubeFour)
         tempDiceRolledList.add(cubesRolled.cubeFive)
         tempDiceRolledList.add(cubesRolled.cubeSix)
-
         return tempDiceRolledList
     }
     fun mapNumbersRolledToPicutresForDisplaying(diceRolled : List<Int>) : List<Int>{
@@ -50,5 +47,4 @@ object GameDataModifier {
         }
         return totalPoints
     }
-
 }

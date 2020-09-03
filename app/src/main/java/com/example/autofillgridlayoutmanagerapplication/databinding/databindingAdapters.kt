@@ -1,10 +1,11 @@
 package com.example.autofillgridlayoutmanagerapplication.databinding
 
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.autofillgridlayoutmanagerapplication.R
-import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInGame
+import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.filling_yamb_ticket.recyclerAdapter.ItemInGame
 
 @BindingAdapter("imageSource")
     fun bindImageToImageView(imageView : ImageView, imageResource : Int){
@@ -16,8 +17,19 @@ import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.r
         imageView.setImageResource(string.toInt())
     }
 
+
+    @BindingAdapter("clickableState")
+    fun setClickableStateOfRollingCube(imageView: ImageView,clickable : Boolean){
+        imageView.isEnabled = clickable
+    }
+
+    @BindingAdapter("changeBackground")
+    fun changeBackgroudnOfAheadCallButton(button: Button,backgroundResource : Int){
+        button.setBackgroundResource(backgroundResource)
+    }
+
     @BindingAdapter("item")
-    fun bindTextToTextViewInRecycler(textView: TextView, item:ItemInGame){
+    fun bindTextToTextViewInRecycler(textView: TextView, item: ItemInGame){
         textView.text = null
         textView.background = null
         if (item.data != null) {

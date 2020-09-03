@@ -8,17 +8,20 @@ import androidx.room.RoomDatabase
 import com.example.autofillgridlayoutmanagerapplication.database.daos.ColumnInYambDao
 import com.example.autofillgridlayoutmanagerapplication.database.daos.DataAboutRolledCubesDao
 import com.example.autofillgridlayoutmanagerapplication.database.daos.GameStatsDao
+import com.example.autofillgridlayoutmanagerapplication.database.daos.PopUpsDao
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.ColumnInYamb
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.DataAboutRolledCubes
 import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.GameStat
+import com.example.autofillgridlayoutmanagerapplication.database.entities_and_data_classes.PopUpsData
 
-@Database(entities = [GameStat::class, ColumnInYamb::class, DataAboutRolledCubes::class], version = 26,exportSchema = true)
+@Database(entities = [GameStat::class, ColumnInYamb::class, DataAboutRolledCubes::class, PopUpsData::class], version = 38,exportSchema = true)
 abstract class GamesPlayedDatabase : RoomDatabase() {
 
 
-   abstract fun getGameStatsDao(): GameStatsDao
-   abstract fun getColumnDao(): ColumnInYambDao
-   abstract fun getDataAboutRolledCubesDao(): DataAboutRolledCubesDao
+    abstract fun getGameStatsDao(): GameStatsDao
+    abstract fun getColumnDao(): ColumnInYambDao
+    abstract fun getDataAboutRolledCubesDao(): DataAboutRolledCubesDao
+    abstract fun getPopUpsDataDao() : PopUpsDao
 
     companion object{
 
@@ -28,7 +31,7 @@ abstract class GamesPlayedDatabase : RoomDatabase() {
             databaseInstance = databaseInstance ?: Room.databaseBuilder(
                 context.applicationContext,
                 GamesPlayedDatabase::class.java,
-                "note_databse"
+                "yamb_database"
             ).fallbackToDestructiveMigration().build()
             return databaseInstance as GamesPlayedDatabase
         }

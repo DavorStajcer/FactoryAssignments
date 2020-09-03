@@ -1,15 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AutoFillGridLayoutManagerApplication</string>
     <string name="past_games_text">PAST GAMES</string>
     <string name="saved_game_toast_message">Game saved.</string>
-    <string name="finished_game_pop_up_tag" translatable="false">FINISHED GAME</string>
-    <string name="entering_values_pop_up_tag" translatable="false">PopUp</string>
     <string name="roll_cubes_btn_text">ROLL CUBES</string>
     <string name="call_ahead_btn_text">Call Ahead</string>
-    <string name="past_games_fragment">PAST GAMES</string>
-    <string name="roll_dices_fragment">ROLL DICES</string>
+    <string name="game_stat_text">Date: %s       Points: %s</string>
     <string name="yamb_ticket_fragment">YAMB TICKET</string>
-    <string name="game_stat_text">Date: %s      Points: %s</string>
+    <string name="roll_dices_fragment">ROLL DICES</string>
+    <string name="past_games_fragment">PAST GAMES</string>
     <string name="game_stat_date">Date: %s</string>
     <string name="game_stat_points">Points: %s</string>
 </resources>

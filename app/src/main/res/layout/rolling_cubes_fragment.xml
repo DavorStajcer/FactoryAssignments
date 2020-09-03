@@ -4,7 +4,10 @@
     <data>
         <variable
             name="data"
-            type="com.example.autofillgridlayoutmanagerapplication.databinding.RollingCubesBindingData" />
+            type="com.example.autofillgridlayoutmanagerapplication.databinding.RollingCubesUiState" />
+        <variable
+            name="viewModel"
+            type="com.example.autofillgridlayoutmanagerapplication.rolling_cubes.RollingCubesViewModel" />
     </data>
 
 
@@ -21,6 +24,8 @@
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            clickableState="@{data.arePicuturesClickable}"
+            android:onClick="@{ () -> viewModel.changeCubePressedState(0)}"
             app:imageSource="@{data.pictureOne}" />
 
         <ImageView
@@ -31,6 +36,8 @@
             app:layout_constraintStart_toEndOf="@+id/ivCube1"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="20dp"
+            clickableState="@{data.arePicuturesClickable}"
+            android:onClick="@{ () -> viewModel.changeCubePressedState(1)}"
             app:imageSource="@{data.pictureTwo}" />
 
         <ImageView
@@ -40,6 +47,8 @@
             android:layout_marginStart="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivCube1"
+            clickableState="@{data.arePicuturesClickable}"
+            android:onClick="@{ () -> viewModel.changeCubePressedState(2)}"
             app:imageSource="@{data.pictureThree}"/>
 
         <ImageView
@@ -49,6 +58,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivCube3"
             app:layout_constraintTop_toBottomOf="@+id/ivCube2"
+            clickableState="@{data.arePicuturesClickable}"
+            android:onClick="@{ () -> viewModel.changeCubePressedState(3)}"
             app:imageSource="@{data.pictureFour}" />
 
         <ImageView
@@ -58,6 +69,8 @@
             android:layout_marginStart="20dp"
             app:layout_constraintTop_toBottomOf="@id/ivCube3"
             app:layout_constraintStart_toStartOf="parent"
+            clickableState="@{data.arePicuturesClickable}"
+            android:onClick="@{ () -> viewModel.changeCubePressedState(4)}"
             app:imageSource="@{data.pictureFive}"/>
 
         <ImageView
@@ -67,6 +80,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivCube5"
             app:layout_constraintTop_toBottomOf="@+id/ivCube4"
+            clickableState="@{data.arePicuturesClickable}"
+            android:onClick="@{ () -> viewModel.changeCubePressedState(5)}"
             app:imageSource="@{data.pictureSix}"/>
 
         <Button
@@ -75,7 +90,8 @@
             android:layout_height="62dp"
             android:layout_marginBottom="30dp"
             android:gravity="center"
-            android:text="@{data.btnRollDicesText}"
+            android:text="@string/roll_cubes_btn_text"
+            android:enabled="@{data.isBtnRollingDicesEnabled}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -84,7 +100,9 @@
             android:id="@+id/btnAheadCall"
             android:layout_width="115.5dp"
             android:layout_height="62dp"
-            android:text="@{data.buttonAheadCallText}"
+            android:text="@string/call_ahead_btn_text"
+            android:enabled="@{data.isBtnAheadCallEnabled}"
+            app:changeBackground="@{data.btnAheadCallBackgroundResource}"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginBottom="10dp"

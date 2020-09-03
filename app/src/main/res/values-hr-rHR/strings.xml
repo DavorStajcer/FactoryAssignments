@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AutoFillGridLayoutManagerApplication</string>
+    <string name="past_games_text">PROŠLE IGRE</string>
+    <string name="saved_game_toast_message">Igra spremljena.</string>
+    <string name="roll_cubes_btn_text">ZAVRTI KOCKICE</string>
+    <string name="call_ahead_btn_text">Najava</string>
+    <string name="past_games_fragment">PROŠLE IGRE</string>
+    <string name="roll_dices_fragment">VRTI KOCKICE</string>
+    <string name="yamb_ticket_fragment">YAMB LISTIĆ</string>
+    <string name="game_stat_text">Datum: %s      Bodovi: %s</string>
+    <string name="game_stat_date">Datum: %s</string>
+    <string name="game_stat_points">Bodovi: %s</string>
+</resources>

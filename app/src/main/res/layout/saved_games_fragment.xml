@@ -22,6 +22,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="100dp"
         android:textSize="18sp"
+        android:text="NO SAVED GAMES YET"
         android:textColor="@color/colorPrimary"
         android:visibility="invisible"
         android:gravity="center" />

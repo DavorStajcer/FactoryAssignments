@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="itemInRecycler"
-            type="com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter.ItemInGame" />
+            name="itemInGame"
+            type="com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.filling_yamb_ticket.recyclerAdapter.ItemInGame" />
         <variable
             name="view_model"
             type="com.example.autofillgridlayoutmanagerapplication.enums_and_interfaces.IViewModelForDisplayingYambTicket"/>
@@ -25,8 +25,8 @@
             android:layout_width="60dp"
             android:layout_height="42dp"
             android:gravity="center"
-            app:item="@{itemInRecycler}"
-            android:onClick="@{() -> view_model.changeIsPopUpDialogEnabledState(position_of_item_clicked,clickable)}"
+            app:item="@{itemInGame}"
+            android:onClick="@{() -> view_model.reactOnItemClicked(position_of_item_clicked,clickable)}"
             />
 
 

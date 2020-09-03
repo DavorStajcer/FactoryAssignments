@@ -6,9 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.autofillgridlayoutmanagerapplication.R
 import com.example.autofillgridlayoutmanagerapplication.database.GamesPlayedDatabase
 import com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.filling_yamb_ticket.FillingYambTicketFragment
-import com.example.autofillgridlayoutmanagerapplication.view_model_factory.ViewModelFactory
+import com.example.autofillgridlayoutmanagerapplication.view_model_factories.ViewModelFactory
 import com.example.autofillgridlayoutmanagerapplication.displaying_saved_games.DisplayingSavedGamesFragment
 import com.example.autofillgridlayoutmanagerapplication.rolling_cubes.RollingCubesFragment
+import com.example.autofillgridlayoutmanagerapplication.view_model_factories.SavedGamesViewModelFactory
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.changing_fragments.*
 
@@ -19,20 +20,14 @@ class ChangingFragmentsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.changing_fragments)
 
-        val fragmentCubes = RollingCubesFragment()
-        val fragmentYamb = FillingYambTicketFragment()
-        val fragmentPastGamesList = DisplayingSavedGamesFragment()
         val viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(
-                GamesPlayedDatabase.getInstanceOfDatabase(this)
-            )
+            SavedGamesViewModelFactory(applicationContext)
         ).get(ChangingFragmentsViewModel::class.java)
 
         val yambFragmentStateAdapter = FragmentStateAdapter(
             supportFragmentManager,
-            this.lifecycle,
-            listOf(fragmentPastGamesList, fragmentCubes, fragmentYamb)
+            this.lifecycle
         )
 
         viewPager.adapter = yambFragmentStateAdapter

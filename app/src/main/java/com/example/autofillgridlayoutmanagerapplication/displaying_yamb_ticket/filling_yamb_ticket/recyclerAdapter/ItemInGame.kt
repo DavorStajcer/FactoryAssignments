@@ -1,4 +1,4 @@
-package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.recyclerAdapter
+package com.example.autofillgridlayoutmanagerapplication.displaying_yamb_ticket.filling_yamb_ticket.recyclerAdapter
 
 import androidx.databinding.BaseObservable
 
